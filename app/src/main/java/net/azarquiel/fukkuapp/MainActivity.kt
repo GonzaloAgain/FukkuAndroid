@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("message")
 
-        myRef.setValue("pepe")
+        myRef.setValue("hola")
     }
 
     override fun onBackPressed() {
