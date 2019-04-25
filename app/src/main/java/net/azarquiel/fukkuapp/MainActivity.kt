@@ -10,12 +10,14 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-
-
+import com.google.firebase.firestore.FirebaseFirestore
+import android.util.Log
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    companion object {
+        val TAG="Jonay"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +37,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        val db = FirebaseFirestore.getInstance()
+        // Create a new user with a first and last name
+        val user:HashMap<String, String> = HashMap()
+        user.put("thrist", "Pepa")
+        user.put("last", "Yeaah")
+        user.put("born", "1456")
 
-        // Write a message to the database
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("message")
+        // Add a new document with a generated ID
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Log.d(
+                    TAG,
+                    "DocumentSnapshot added with ID: " + documentReference.id
+                )
+            }
+            .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
 
-        myRef.setValue("hola desde gonzalo develop")
     }
 
     override fun onBackPressed() {
