@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
+import net.azarquiel.fukkuapp.Clases.GenerarEstructura
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -37,24 +38,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val db = FirebaseFirestore.getInstance()
-        // Create a new user with a first and last name
-        val user:HashMap<String, String> = HashMap()
-        user.put("thrist", "Pepa")
-        user.put("last", "Yeaah")
-        user.put("born", "1456")
-
-        // Add a new document with a generated ID
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d(
-                    TAG,
-                    "DocumentSnapshot added with ID: " + documentReference.id
-                )
-            }
-            .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
-
+        GenerarEstructura.generar()
     }
 
     override fun onBackPressed() {
