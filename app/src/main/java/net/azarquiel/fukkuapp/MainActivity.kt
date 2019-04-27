@@ -16,7 +16,7 @@ import android.util.Log
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
-        val TAG="Jonay"
+        val TAG="Gonzalo"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
