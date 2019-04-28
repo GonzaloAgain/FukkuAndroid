@@ -1,5 +1,6 @@
 package net.azarquiel.fukkuapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -12,6 +13,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -23,6 +26,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        pintar()
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -55,6 +60,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
 
+    }
+
+    private fun pintar() {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        tvHello.text = user!!.displayName.toString()
     }
 
     override fun onBackPressed() {
@@ -107,4 +118,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }
