@@ -1,18 +1,25 @@
-package net.azarquiel.fukkuapp
+package net.azarquiel.fukkuapp.Views
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import com.google.firebase.firestore.FirebaseFirestore
-import android.util.Log
-import net.azarquiel.fukkuapp.Clases.GenerarEstructura
+import kotlinx.android.synthetic.main.content_main.*
+import net.azarquiel.fukkuapp.Class.ViewPagerAdapter
+import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
+import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
+import net.azarquiel.fukkuapp.R
+import org.jetbrains.anko.toast
+import java.util.ArrayList
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -25,20 +32,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        fab.setOnClickListener {
+            toast("Añadir producto")
         }
 
         val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        GenerarEstructura.generar()
+        setupViewPager(viewPager)
+        tabs.setupWithViewPager(viewPager)
     }
 
     override fun onBackPressed() {
@@ -68,27 +77,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
+            R.id.nav_productos -> {
+                
             }
-            R.id.nav_gallery -> {
+            R.id.nav_productosFav -> {
 
             }
-            R.id.nav_slideshow -> {
+            R.id.nav_categoriasFav -> {
 
             }
-            R.id.nav_manage -> {
+            R.id.nav_chat -> {
 
             }
-            R.id.nav_share -> {
+            R.id.nav_cerrarSesion -> {
 
             }
-            R.id.nav_send -> {
-
+            R.id.nav_exit -> {
+                finish()
             }
         }
-
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+    private fun setupViewPager(viewPager: ViewPager) {
+        val adapter = ViewPagerAdapter(supportFragmentManager)
+        adapter.addFragment(Fragment_productos_por_categoria_fav(), "Productos por categoria de interes")
+        adapter.addFragment(Fragment_productos_por_cercania(), "Productos por cercania")
+        viewPager.adapter = adapter
+    }
+
 }

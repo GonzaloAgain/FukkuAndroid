@@ -13,25 +13,23 @@
         android:orientation="vertical"
         android:gravity="bottom">
 
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            app:srcCompat="@mipmap/ic_launcher_round"
+            app:srcCompat="@drawable/user"
+            android:layout_gravity="center"
             android:contentDescription="@string/nav_header_desc"
-            android:id="@+id/imageView"/>
+            android:id="@+id/imageUser"/>
 
     <TextView
+            android:id="@+id/nick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:text="@string/nav_header_title"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/nav_nickUser"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nav_header_subtitle"
-            android:id="@+id/textView"/>
 
 </LinearLayout>

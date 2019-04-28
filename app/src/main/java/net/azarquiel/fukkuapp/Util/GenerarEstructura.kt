@@ -1,8 +1,8 @@
-package net.azarquiel.fukkuapp.Clases
+package net.azarquiel.fukkuapp.Util
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import net.azarquiel.fukkuapp.MainActivity
+import net.azarquiel.fukkuapp.Views.MainActivity
 
 object GenerarEstructura {
 
