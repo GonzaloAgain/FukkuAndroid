@@ -2,9 +2,6 @@ package net.azarquiel.fukkuapp.Views
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBarDrawerToggle
@@ -14,12 +11,15 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import net.azarquiel.fukkuapp.Class.Categoria
 import net.azarquiel.fukkuapp.Class.ViewPagerAdapter
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
 import net.azarquiel.fukkuapp.R
 import org.jetbrains.anko.toast
-import java.util.ArrayList
+import com.google.firebase.firestore.FirebaseFirestore
+import net.azarquiel.fukkuapp.Class.Producto
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -48,6 +48,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setupViewPager(viewPager)
         tabs.setupWithViewPager(viewPager)
+
+        val db = FirebaseFirestore.getInstance()
+        //val categoria = Categoria("categoria1", "Categoria 1", "icono de categoria 1")
+        //db.collection("Categorias").document("categoria1").set(categoria)
+        val producto = Producto("producto 1", "producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1")
+        db.collection("Categorias").document("categoria1").collection("Productos").add(producto)
     }
 
     override fun onBackPressed() {
@@ -78,7 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_productos -> {
-                
+
             }
             R.id.nav_productosFav -> {
 
