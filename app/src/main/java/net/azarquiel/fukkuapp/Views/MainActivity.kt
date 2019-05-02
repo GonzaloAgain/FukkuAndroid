@@ -1,5 +1,6 @@
 package net.azarquiel.fukkuapp.Views
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -19,13 +20,10 @@ import net.azarquiel.fukkuapp.R
 import org.jetbrains.anko.toast
 import com.google.firebase.firestore.FirebaseFirestore
 import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.Constantes.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    companion object {
-        val TAG="Jonay"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +47,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setupViewPager(viewPager)
         tabs.setupWithViewPager(viewPager)
 
-        val db = FirebaseFirestore.getInstance()
+        //val db = FirebaseFirestore.getInstance()
         //val categoria = Categoria("categoria1", "Categoria 1", "icono de categoria 1")
         //db.collection("Categorias").document("categoria1").set(categoria)
-        val producto = Producto("producto 1", "producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1")
-        db.collection("Categorias").document("categoria1").collection("Productos").add(producto)
+        //val producto = Producto("producto 1", "producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1")
+        //db.collection("Categorias").document("categoria1").collection("Productos").add(producto)
     }
 
     override fun onBackPressed() {
@@ -84,10 +82,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_productos -> {
-
+                productos(TUS_PRODUCTOS)
             }
             R.id.nav_productosFav -> {
-
+                productos(TUS_PRODUCTOS_FAVORITOS)
             }
             R.id.nav_categoriasFav -> {
 
@@ -113,4 +111,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewPager.adapter = adapter
     }
 
+    private fun productos(accion : String){
+        var intent= Intent(this, ProductosActivity::class.java)
+        intent.putExtra("accion", accion)
+        startActivity(intent)
+    }
 }

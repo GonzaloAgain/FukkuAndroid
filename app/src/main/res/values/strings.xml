@@ -14,4 +14,6 @@
     <string name="exit">Salir</string>
     <string name="nav_nickUser">Nick del usuario</string>
     <string name="categorias">Categorias</string>
+    <string name="title_activity_productos">ProductosActivity</string>
+    <string name="title_activity_categoria">CategoriaActivity</string>
 </resources>
