@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.categoriasrow.view.*
 import net.azarquiel.fukkuapp.Class.Categoria
 
 class CustomAdapterCategorias(val context: Context,
@@ -36,7 +37,8 @@ class CustomAdapterCategorias(val context: Context,
 
     class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Categoria){
-
+            itemView.tvNombreCategoria.text=dataItem.nombre
+            itemView.tag=dataItem
         }
 
     }

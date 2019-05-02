@@ -38,8 +38,10 @@ class CustomAdapterProductos(val context: Context,
     class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Producto){
             itemView.tvNombreProducto.text=dataItem.nombre
-            itemView.tvDescripcionProducto.text=dataItem.id
-            itemView.tvFechaProducto.text=dataItem.descripcion
+            itemView.tvDescripcionProducto.text=dataItem.descripcion
+            itemView.tvFechaProducto.text=dataItem.fecha
+            itemView.tvPrecioProducto.text=dataItem.precio
+            itemView.tag=dataItem
         }
 
     }

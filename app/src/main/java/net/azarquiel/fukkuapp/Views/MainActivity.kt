@@ -19,6 +19,7 @@ import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
 import net.azarquiel.fukkuapp.R
 import org.jetbrains.anko.toast
 import com.google.firebase.firestore.FirebaseFirestore
+import net.azarquiel.fukkuapp.CategoriaActivity
 import net.azarquiel.fukkuapp.Class.Producto
 import net.azarquiel.fukkuapp.Constantes.*
 
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 productos(TUS_PRODUCTOS_FAVORITOS)
             }
             R.id.nav_categoriasFav -> {
-
+                categorias()
             }
             R.id.nav_chat -> {
 
@@ -114,6 +115,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun productos(accion : String){
         var intent= Intent(this, ProductosActivity::class.java)
         intent.putExtra("accion", accion)
+        startActivity(intent)
+    }
+
+    private fun categorias(){
+        var intent= Intent(this, CategoriaActivity::class.java)
         startActivity(intent)
     }
 }
