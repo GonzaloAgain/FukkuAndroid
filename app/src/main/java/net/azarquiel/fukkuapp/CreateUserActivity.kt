@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_create_user.*
 
 class CreateUserActivity : AppCompatActivity() {
@@ -17,6 +18,9 @@ class CreateUserActivity : AppCompatActivity() {
         val TAG="Gonzalo"
     }
 
+    private var user: FirebaseUser? = null
+    private lateinit var password: String
+    private lateinit var email: String
     private lateinit var completeName: String
     private lateinit var auth: FirebaseAuth
 
@@ -29,22 +33,10 @@ class CreateUserActivity : AppCompatActivity() {
 
         btnEntrar.setOnClickListener{
             completeName = etCompleteName.text.toString()
-            val email = etEmail.text.toString()
-            val password = etPassword.text.toString()
+            email = etEmail.text.toString()
+            password = etPassword.text.toString()
 
             createAccount(email, password)
-
-            /*val user = HashMap<String, Any>()
-            user["nombre"] = completeName
-            user["email"] = email
-            user["password"] = password
-
-            val db = FirebaseFirestore.getInstance()
-            db.collection("Usuarios").document(completeName)
-                .set(user)
-                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }*/
-
         }
     }
 
@@ -59,11 +51,8 @@ class CreateUserActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
-                    addDisplayName(user)
+                    createUserFirestore()
 
-                    val intent = Intent(this,MainActivity::class.java)
-                    startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -73,7 +62,25 @@ class CreateUserActivity : AppCompatActivity() {
             }
     }
 
-    private fun addDisplayName(user: FirebaseUser?) {
+    private fun createUserFirestore() {
+        user = auth.currentUser
+
+        val userFirestore = HashMap<String, Any>()
+            userFirestore["nombre"] = completeName
+            userFirestore["email"] = email
+            userFirestore["password"] = password
+            userFirestore["uid"] = user!!.uid
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Usuarios").document(user!!.uid)
+            .set(userFirestore)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+
+        addDisplayName()
+    }
+
+    private fun addDisplayName() {
         val profileUpdates = UserProfileChangeRequest.Builder()
             .setDisplayName(completeName)
             .build()
@@ -82,6 +89,10 @@ class CreateUserActivity : AppCompatActivity() {
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "User profile updated.")
+
+                    val intent = Intent(this,MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             }
     }
