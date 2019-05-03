@@ -12,16 +12,12 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import net.azarquiel.fukkuapp.Class.Categoria
 import net.azarquiel.fukkuapp.Class.ViewPagerAdapter
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
 import net.azarquiel.fukkuapp.R
 import org.jetbrains.anko.toast
-import com.google.firebase.firestore.FirebaseFirestore
-import net.azarquiel.fukkuapp.CategoriaActivity
-import net.azarquiel.fukkuapp.Class.Producto
-import net.azarquiel.fukkuapp.Constantes.*
+import net.azarquiel.fukkuapp.Util.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -32,7 +28,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener {
-            toast("Añadir producto")
+            addProducto()
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -120,6 +116,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun categorias(){
         var intent= Intent(this, CategoriaActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun addProducto(){
+        var intent= Intent(this, AddProductoActivity::class.java)
         startActivity(intent)
     }
 }

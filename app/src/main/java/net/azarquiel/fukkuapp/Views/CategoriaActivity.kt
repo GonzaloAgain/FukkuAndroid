@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp
+package net.azarquiel.fukkuapp.Views
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -10,7 +10,8 @@ import kotlinx.android.synthetic.main.activity_categoria.*
 import kotlinx.android.synthetic.main.content_categoria.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
 import net.azarquiel.fukkuapp.Class.Categoria
-import net.azarquiel.fukkuapp.Constantes.*
+import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.R
 
 class CategoriaActivity : AppCompatActivity() {
 
@@ -34,7 +35,7 @@ class CategoriaActivity : AppCompatActivity() {
     }
 
     private fun crearAdapter(){
-        adapter= CustomAdapterCategorias(this,R.layout.categoriasrow)
+        adapter= CustomAdapterCategorias(this, R.layout.categoriasrow)
         rvCategorias.layoutManager= LinearLayoutManager(this)
         rvCategorias.adapter=adapter
     }

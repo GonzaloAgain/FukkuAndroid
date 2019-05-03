@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 
 import kotlinx.android.synthetic.main.activity_productos.*
 import kotlinx.android.synthetic.main.content_productos.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.Class.Producto
-import net.azarquiel.fukkuapp.Constantes.*
+import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
 
 class ProductosActivity : AppCompatActivity() {

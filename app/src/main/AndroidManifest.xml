@@ -9,8 +9,10 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".Views.AddProductoActivity">
+        </activity>
         <activity
-                android:name=".CategoriaActivity"
+                android:name=".Views.CategoriaActivity"
                 android:label="@string/title_activity_categoria"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>

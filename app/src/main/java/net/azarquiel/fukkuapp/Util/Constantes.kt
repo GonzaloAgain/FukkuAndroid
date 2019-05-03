@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Constantes
+package net.azarquiel.fukkuapp.Util
 
 const val TUS_PRODUCTOS="tusproductos"
 const val TUS_PRODUCTOS_FAVORITOS="tusproductosfavoritos"

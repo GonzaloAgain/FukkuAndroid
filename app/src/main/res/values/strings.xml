@@ -16,4 +16,9 @@
     <string name="categorias">Categorias</string>
     <string name="title_activity_productos">ProductosActivity</string>
     <string name="title_activity_categoria">CategoriaActivity</string>
+    <string name="add_producto_nombre">Nombre:</string>
+    <string name="add_producto_descripcion">Descripcion:</string>
+    <string name="add_producto_precio">Precio:</string>
+    <string name="add_producto_categoria">Categoria:</string>
+    <string name="add_producto_add">Subir Producto</string>
 </resources>
