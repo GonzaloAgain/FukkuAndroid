@@ -5,8 +5,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.productosrow.view.*
+import net.azarquiel.fukkuapp.Class.Imagen
 import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.Util.*
 
 class CustomAdapterProductos(val context: Context,
                     val layout: Int
@@ -34,7 +37,6 @@ class CustomAdapterProductos(val context: Context,
         notifyDataSetChanged()
     }
 
-
     class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Producto){
             itemView.tvNombreProducto.text=dataItem.nombre
@@ -44,5 +46,20 @@ class CustomAdapterProductos(val context: Context,
             itemView.tag=dataItem
         }
 
+        private fun cogerPrimeraImagen(dataItem: Producto):Imagen?{
+            var imagen:Imagen?=null
+            var db = FirebaseFirestore.getInstance()
+            db.collection(COLECCION_PRODUCTOS).document(dataItem.id).collection(SUBCOLECCION_IMAGENES).limit(1)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        for(document in task.result!!) {
+                            imagen= Imagen("${document.data.getValue(CAMPO_ID)}","${document.data.getValue(CAMPO_IMAGEN)}","${document.data.getValue(
+                                CAMPO_PRODUCTOID)}")
+                        }
+                    }
+                }
+            return imagen
+        }
     }
 }
