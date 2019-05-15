@@ -1,7 +1,6 @@
 package net.azarquiel.fukkuapp.Views
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -10,7 +9,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -18,15 +16,7 @@ import net.azarquiel.fukkuapp.Class.ViewPagerAdapter
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
 import net.azarquiel.fukkuapp.R
-import org.jetbrains.anko.toast
 import net.azarquiel.fukkuapp.Util.*
-import android.support.annotation.NonNull
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.firebase.storage.UploadTask
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.storage.StorageReference
-import java.io.File
-
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -111,8 +101,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = ViewPagerAdapter(supportFragmentManager)
-        adapter.addFragment(Fragment_productos_por_categoria_fav(), "Productos por categoria de interes")
         adapter.addFragment(Fragment_productos_por_cercania(), "Productos por cercania")
+        adapter.addFragment(Fragment_productos_por_categoria_fav(), "Productos por categoria de interes")
         viewPager.adapter = adapter
     }
 
@@ -132,23 +122,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
-    private fun subirArchivoPrueba(){
-        var storageRef = FirebaseStorage.getInstance().reference
-
-        var file = Uri.fromFile(File("path/to/images/rivers.jpg"))
-        val riversRef = storageRef.child("images/${file.lastPathSegment}")
-        var uploadTask = riversRef.putFile(file)
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener {
-            // Handle unsuccessful uploads
-        }.addOnSuccessListener {
-            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-            // ...
-
-        }
-    }
-
-    private fun bajarFoto(){
-
-    }
 }

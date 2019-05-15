@@ -1,10 +1,12 @@
 package net.azarquiel.fukkuapp.Class
 
+import java.io.Serializable
+
 data class Categoria(
     val id : String,
     val nombre : String,
     val icono : String
-)
+):Serializable
 
 data class Usuario(
     val id : String,

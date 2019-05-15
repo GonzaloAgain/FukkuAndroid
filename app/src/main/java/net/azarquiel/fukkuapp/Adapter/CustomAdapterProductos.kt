@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.productosrow.view.*
 import net.azarquiel.fukkuapp.Class.Imagen
 import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 
 class CustomAdapterProductos(val context: Context,
@@ -39,6 +42,7 @@ class CustomAdapterProductos(val context: Context,
 
     class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Producto){
+            cargarImagen(dataItem.id,itemView)
             itemView.tvNombreProducto.text=dataItem.nombre
             itemView.tvDescripcionProducto.text=dataItem.descripcion
             itemView.tvFechaProducto.text=dataItem.fecha
@@ -46,10 +50,11 @@ class CustomAdapterProductos(val context: Context,
             itemView.tag=dataItem
         }
 
-        private fun cogerPrimeraImagen(dataItem: Producto):Imagen?{
+        private fun cargarImagen(id:String,itemView:View){
+            var db=FirebaseFirestore.getInstance()
             var imagen:Imagen?=null
-            var db = FirebaseFirestore.getInstance()
-            db.collection(COLECCION_PRODUCTOS).document(dataItem.id).collection(SUBCOLECCION_IMAGENES).limit(1)
+
+            db.collection(COLECCION_PRODUCTOS).document(id).collection(SUBCOLECCION_IMAGENES).limit(1)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -57,9 +62,23 @@ class CustomAdapterProductos(val context: Context,
                             imagen= Imagen("${document.data.getValue(CAMPO_ID)}","${document.data.getValue(CAMPO_IMAGEN)}","${document.data.getValue(
                                 CAMPO_PRODUCTOID)}")
                         }
+                        mostrarImagen(itemView,imagen)
                     }
                 }
-            return imagen
+        }
+
+        private fun mostrarImagen(itemView:View,imagen:Imagen?){
+            imagen?.let {
+                var storageRef = FirebaseStorage.getInstance().reference
+
+                storageRef.child(imagen.imagen).downloadUrl.addOnSuccessListener {
+                    Picasso.with(context).load(it).into(itemView.ivImagenProducto)
+                }.addOnFailureListener {
+                    // Handle any errors
+                }
+            }?: run {
+                itemView.ivImagenProducto.setImageResource(R.drawable.notfound)
+            }
         }
     }
 }

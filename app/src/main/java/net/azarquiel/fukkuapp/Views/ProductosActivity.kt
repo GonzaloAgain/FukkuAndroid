@@ -5,10 +5,12 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 import kotlinx.android.synthetic.main.activity_productos.*
 import kotlinx.android.synthetic.main.content_productos.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
+import net.azarquiel.fukkuapp.Class.Categoria
 import net.azarquiel.fukkuapp.Class.Producto
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
@@ -19,6 +21,7 @@ class ProductosActivity : AppCompatActivity() {
     private lateinit var adapter : CustomAdapterProductos
     private lateinit var arrayProductos : ArrayList<Producto>
     private lateinit var db: FirebaseFirestore
+    private lateinit var categoria:Categoria
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +38,14 @@ class ProductosActivity : AppCompatActivity() {
         crearAdapter()
 
         if(accion == TUS_PRODUCTOS){
-            cargarProductos(SUBCOLECCION_PRODUCTOS)
+            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
+            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS)
         }else if(accion == TUS_PRODUCTOS_FAVORITOS){
-            cargarProductos(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
+            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS_FAVORITOS)
+        }else if(accion == ACCION_PRODUCTOS_CATEGORIA){
+            categoria=intent.getSerializableExtra("categoria") as Categoria
+            cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
         }
     }
 
@@ -47,10 +55,10 @@ class ProductosActivity : AppCompatActivity() {
         rvProductos.adapter=adapter
     }
 
-    private fun cargarProductos(subcoleccion:String){
+    private fun cargarProductos(coleccion:String,id:String,subcoleccion:String){
         arrayProductos=ArrayList()
-        //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(subcoleccion)
+        db.collection(coleccion).document(id).collection(subcoleccion)
+            .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

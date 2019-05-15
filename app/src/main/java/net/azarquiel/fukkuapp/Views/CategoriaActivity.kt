@@ -1,9 +1,11 @@
 package net.azarquiel.fukkuapp.Views
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.google.firebase.firestore.FirebaseFirestore
 
 import kotlinx.android.synthetic.main.activity_categoria.*
@@ -12,6 +14,7 @@ import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
 import net.azarquiel.fukkuapp.Class.Categoria
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
+import org.jetbrains.anko.toast
 
 class CategoriaActivity : AppCompatActivity() {
 
@@ -55,5 +58,13 @@ class CategoriaActivity : AppCompatActivity() {
                     adapter.setCategorias(arrayCategorias)
                 }
             }
+    }
+
+    fun pulsarCategoria(v: View){
+        val categoria=v.tag as Categoria
+        var intent= Intent(this, ProductosActivity::class.java)
+        intent.putExtra("accion", ACCION_PRODUCTOS_CATEGORIA)
+        intent.putExtra("categoria", categoria)
+        startActivity(intent)
     }
 }

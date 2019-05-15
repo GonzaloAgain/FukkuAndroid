@@ -6,7 +6,6 @@ const val TUS_PRODUCTOS_FAVORITOS="tusproductosfavoritos"
 const val COLECCION_USUARIOS="Usuarios"
 const val COLECCION_CATEGORIA="Categorias"
 const val COLECCION_PRODUCTOS="Productos"
-const val COLECCION_IMAGENES="Imagenes"
 
 const val SUBCOLECCION_PRODUCTOS="Productos"
 const val SUBCOLECCION_PRODUCTOS_FAVORITOS="Productos Favoritos"
@@ -30,4 +29,6 @@ const val CAMPO_PRECIO="precio"
 const val CAMPO_FECHA="fecha"
 const val CAMPO_CATEGORIAID="categoriaId"
 const val CAMPO_USUARIOID="usuarioId"
+
+const val ACCION_PRODUCTOS_CATEGORIA="accion productos de una categoria"
 
