@@ -1,8 +1,15 @@
 package net.azarquiel.fukkuapp.Views
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -31,15 +38,53 @@ class AddProductoActivity : AppCompatActivity(){
     private lateinit var pickerDialog: PickerDialog
     private lateinit var riversRef: StorageReference
     private var imagen: Imagen?=null
+    private var locationManager : LocationManager? = null
+    private var veces = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_producto)
+
         db = FirebaseFirestore.getInstance()
+
+        // Create persistent LocationManager reference
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?;
+
+        var permissionCheck=ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if(permissionCheck == PackageManager.PERMISSION_DENIED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION)){
+
+            }else{
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),1)
+            }
+        }
 
         cargarCategorias()
         btnSubirImagen.setOnClickListener { picker() }
-        btnSubirProducto.setOnClickListener { subirProducto() }
+        btnSubirProducto.setOnClickListener { comprobarCampos() }
+    }
+
+    //define the listener
+    private val locationListener: LocationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            Log.d("Jonay", "${location.longitude}      ${location.latitude}")
+            addProducto(location.longitude,location.latitude)
+            circulo(location.longitude,location.latitude)
+        }
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
+            Log.d("Jonay", "${status}")
+        }
+        override fun onProviderEnabled(provider: String) {}
+        override fun onProviderDisabled(provider: String) {
+            toast("Tienes que activar la ubicación del movil")
+        }
+    }
+
+    private fun circulo(longitude: Double, latitude: Double){
+        var distanceHeight = FloatArray(2)
+        Location.distanceBetween(latitude, longitude, 43.5672, -87.9816, distanceHeight)
+        Log.d("Jonay", "${distanceHeight[0]}")
     }
 
     private fun cargarCategorias(){
@@ -61,32 +106,42 @@ class AddProductoActivity : AppCompatActivity(){
     private fun cargarSpinner(){
         spinnerCategorias.adapter=ArrayAdapter(this, android.R.layout.simple_spinner_item, arrayStringCategorias)
         spinnerCategorias.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 categoriaElegida=arrayStringCategorias.get(position)
             }
         }
     }
 
-    private fun subirProducto(){
+    private fun comprobarCampos() {
         if(!etNombreProducto.text.isNullOrBlank() && !etDescripcionProducto.text.isNullOrBlank() && !etPrecioProducto.text.isNullOrBlank() && !categoriaElegida.isNullOrEmpty()){
-            addProducto()
+            try {
+                // Request location updates
+                locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+
+            } catch(ex: SecurityException) {
+                var permissionCheck=ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                if(permissionCheck == PackageManager.PERMISSION_DENIED){
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),1)
+                }
+            }
         }else{
             toast("Tienes que rellenar todo")
         }
     }
 
-    private fun addProducto(){
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
-        var producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"",
-            "",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,"KGqBjsuqe0747tCzBeyu")
-        addProductoColeccionProductos(producto)
-        addProductoColeccionUsuarios(producto)
-        addProductoColeccionCategorias(producto)
-        finish()
+    private fun addProducto(longitude: Double, latitude: Double){
+        if(veces == 0){
+            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            var producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"${latitude}",
+                "${longitude}",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,"KGqBjsuqe0747tCzBeyu")
+            addProductoColeccionProductos(producto)
+            addProductoColeccionUsuarios(producto)
+            addProductoColeccionCategorias(producto)
+            finish()
+            veces = 1
+            Log.d("Jonay", "${veces}")
+        }
     }
 
     private fun addProductoColeccionProductos(producto:Producto){
