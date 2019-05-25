@@ -9,10 +9,13 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import net.azarquiel.fukkuapp.Class.Categoria
 import net.azarquiel.fukkuapp.Class.ViewPagerAdapter
+import net.azarquiel.fukkuapp.Fragments.Fragment_categorias
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
 import net.azarquiel.fukkuapp.R
@@ -41,12 +44,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setupViewPager(viewPager)
         tabs.setupWithViewPager(viewPager)
-
-        //val db = FirebaseFirestore.getInstance()
-        //val categoria = Categoria("categoria1", "Categoria 1", "icono de categoria 1")
-        //db.collection("Categorias").document("categoria1").set(categoria)
-        //val producto = Producto("producto 1", "producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1","producto 1")
-        //db.collection("Categorias").document("categoria1").collection("Productos").add(producto)
     }
 
     override fun onBackPressed() {
@@ -101,6 +98,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = ViewPagerAdapter(supportFragmentManager)
+        adapter.addFragment(Fragment_categorias(), "Categorías")
         adapter.addFragment(Fragment_productos_por_cercania(), "Productos por cercania")
         adapter.addFragment(Fragment_productos_por_categoria_fav(), "Productos por categoria de interes")
         viewPager.adapter = adapter
@@ -122,4 +120,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
+    fun pulsarCategoria(v: View){
+        val categoria=v.tag as Categoria
+        var intent= Intent(this, Productos_de_un_categoria::class.java)
+        intent.putExtra("categoria", categoria)
+        startActivity(intent)
+    }
 }

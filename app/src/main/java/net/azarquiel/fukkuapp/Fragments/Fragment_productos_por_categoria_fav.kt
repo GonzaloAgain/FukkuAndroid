@@ -35,7 +35,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         arrayProductos=ArrayList()
         arrayCategoriasInteres=ArrayList()
         crearAdapter()
-        cargarProductosCategoriasInteres("KGqBjsuqe0747tCzBeyu")
+        cargarCategoriasInteres("KGqBjsuqe0747tCzBeyu")
     }
 
     private fun crearAdapter() {
@@ -44,7 +44,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         rvProductosCategoriaFav.adapter=adapter
     }
 
-    private fun cargarProductosCategoriasInteres(idUsuario:String){
+    private fun cargarCategoriasInteres(idUsuario:String){
         db=FirebaseFirestore.getInstance()
         //Este metodo de sacar colecciones de interes puede ser static porque se repite dos veces To Do
         db.collection(COLECCION_USUARIOS).document(idUsuario).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)

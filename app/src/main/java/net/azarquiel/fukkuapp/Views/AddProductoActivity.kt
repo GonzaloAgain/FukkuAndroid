@@ -70,11 +70,9 @@ class AddProductoActivity : AppCompatActivity(){
         override fun onLocationChanged(location: Location) {
             Log.d("Jonay", "${location.longitude}      ${location.latitude}")
             addProducto(location.longitude,location.latitude)
-            circulo(location.longitude,location.latitude)
+            //circulo(location.longitude,location.latitude)
         }
-        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-            Log.d("Jonay", "${status}")
-        }
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
         override fun onProviderEnabled(provider: String) {}
         override fun onProviderDisabled(provider: String) {
             toast("Tienes que activar la ubicación del movil")

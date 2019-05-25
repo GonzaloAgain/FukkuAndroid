@@ -14,7 +14,6 @@ import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
 import net.azarquiel.fukkuapp.Class.Categoria
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
-import org.jetbrains.anko.toast
 
 class CategoriaActivity : AppCompatActivity() {
 
@@ -34,7 +33,7 @@ class CategoriaActivity : AppCompatActivity() {
         }
 
         crearAdapter()
-        cargarCategorias()
+        cargarCategoriasDeInteres()
     }
 
     private fun crearAdapter(){
@@ -43,7 +42,7 @@ class CategoriaActivity : AppCompatActivity() {
         rvCategorias.adapter=adapter
     }
 
-    private fun cargarCategorias(){
+    private fun cargarCategoriasDeInteres(){
         arrayCategorias= ArrayList()
         //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
@@ -62,8 +61,7 @@ class CategoriaActivity : AppCompatActivity() {
 
     fun pulsarCategoria(v: View){
         val categoria=v.tag as Categoria
-        var intent= Intent(this, ProductosActivity::class.java)
-        intent.putExtra("accion", ACCION_PRODUCTOS_CATEGORIA)
+        var intent= Intent(this, Productos_de_un_categoria::class.java)
         intent.putExtra("categoria", categoria)
         startActivity(intent)
     }
