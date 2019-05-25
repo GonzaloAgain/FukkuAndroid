@@ -1,16 +1,16 @@
-package net.azarquiel.fukkuapp
+package net.azarquiel.fukkuapp.view
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.android.synthetic.main.activity_create_user.*
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_login.*
+import net.azarquiel.fukkuapp.R
+import net.azarquiel.fukkuapp.service.MyFirebaseInstanceIdService
 
 class LoginActivity : AppCompatActivity() {
 
@@ -36,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         btnCreateAccount.setOnClickListener{
-            val intent = Intent(this,CreateUserActivity::class.java)
+            val intent = Intent(this, CreateUserActivity::class.java)
             startActivity(intent)
         }
 
@@ -56,9 +56,12 @@ class LoginActivity : AppCompatActivity() {
 
 //                    val user = auth.currentUser
 
-                    val intent = Intent(this,MainActivity::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
+
+                    val registrationToken = FirebaseInstanceId.getInstance().token
+                    MyFirebaseInstanceIdService.addTokentoFireStore(registrationToken)
 
                 } else {
                     // If sign in fails, display a message to the user.

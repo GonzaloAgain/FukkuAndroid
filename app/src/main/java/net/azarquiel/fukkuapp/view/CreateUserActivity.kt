@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp
+package net.azarquiel.fukkuapp.view
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -9,19 +9,23 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_create_user.*
+import net.azarquiel.fukkuapp.R
+import net.azarquiel.fukkuapp.model.User
+import net.azarquiel.fukkuapp.util.FirestoreUtil
+import org.jetbrains.anko.toast
 
 class CreateUserActivity : AppCompatActivity() {
 
     companion object {
-        val TAG="Gonzalo"
+        const val TAG="Gonzalo"
     }
 
-    private var user: FirebaseUser? = null
+    private lateinit var surnames: String
+    private lateinit var user: FirebaseUser
     private lateinit var password: String
     private lateinit var email: String
-    private lateinit var completeName: String
+    private lateinit var name: String
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +36,8 @@ class CreateUserActivity : AppCompatActivity() {
 
 
         btnEntrar.setOnClickListener{
-            completeName = etCompleteName.text.toString()
+            name = etName.text.toString()
+            surnames = etSurnames.text.toString()
             email = etEmail.text.toString()
             password = etPassword.text.toString()
 
@@ -63,34 +68,23 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     private fun createUserFirestore() {
-        user = auth.currentUser
-
-        val userFirestore = HashMap<String, Any>()
-            userFirestore["nombre"] = completeName
-            userFirestore["email"] = email
-            userFirestore["password"] = password
-            userFirestore["uid"] = user!!.uid
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("Usuarios").document(user!!.uid)
-            .set(userFirestore)
-            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
-
+        user = auth.currentUser!!
+        val userFirestore = User(name, surnames, email, user.uid, mutableListOf())
+        FirestoreUtil.createUserFirestore(userFirestore)
         addDisplayName()
     }
 
     private fun addDisplayName() {
         val profileUpdates = UserProfileChangeRequest.Builder()
-            .setDisplayName(completeName)
+            .setDisplayName(name)
             .build()
 
-        user?.updateProfile(profileUpdates)
-            ?.addOnCompleteListener { task ->
+        user.updateProfile(profileUpdates)
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "User profile updated.")
 
-                    val intent = Intent(this,MainActivity::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 }
@@ -100,15 +94,20 @@ class CreateUserActivity : AppCompatActivity() {
     private fun validateForm(): Boolean {
         var valid = true
 
-        val nombre = etCompleteName.text.toString()
-        if (TextUtils.isEmpty(nombre)) {
-            etCompleteName.error = "Required."
+        if (TextUtils.isEmpty(name)) {
+            etName.error = "Required."
             valid = false
         } else {
-            etCompleteName.error = null
+            etName.error = null
         }
 
-        val email = etEmail.text.toString()
+        if (TextUtils.isEmpty(surnames)) {
+            etSurnames.error = "Required."
+            valid = false
+        } else {
+            etName.error = null
+        }
+
         if (TextUtils.isEmpty(email)) {
             etEmail.error = "Required."
             valid = false
@@ -116,7 +115,6 @@ class CreateUserActivity : AppCompatActivity() {
             etEmail.error = null
         }
 
-        val password = etPassword.text.toString()
         if (TextUtils.isEmpty(password)) {
             etPassword.error = "Required."
             valid = false

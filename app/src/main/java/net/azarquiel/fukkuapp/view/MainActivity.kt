@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp
+package net.azarquiel.fukkuapp.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,16 +11,12 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import com.google.firebase.firestore.FirebaseFirestore
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.content_main.*
+import net.azarquiel.fukkuapp.R
+import net.azarquiel.fukkuapp.util.FirestoreUtil
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    companion object {
-        val TAG="Gonzalo"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,43 +25,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         pintar()
 
+        btnCreateChannel.setOnClickListener {
+            //meterlo en el utils
+            //FirestoreUtil.getOrCreateChatChannel("uDi9Nbm2Pjb1zUi5f7SAOSu57wY2"){ channelID ->
+            FirestoreUtil.getOrCreateChatChannel("nWoa2oV5AzVxkiGTEPv6q39J9XM2"){ channelID ->
+                val intent = Intent(this, ChatActivity::class.java)
+                intent.putExtra("channelID", channelID)
+                startActivity(intent)
+            }
+        }
+
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
 
         val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-
-        val db = FirebaseFirestore.getInstance()
-        // Create a new user with a first and last name
-        val user:HashMap<String, String> = HashMap()
-        user.put("thrist", "Pepa")
-        user.put("last", "Yeaah")
-        user.put("born", "1456")
-
-        // Add a new document with a generated ID
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                Log.d(
-                    TAG,
-                    "DocumentSnapshot added with ID: " + documentReference.id
-                )
-            }
-            .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
-
     }
 
     private fun pintar() {
         val user = FirebaseAuth.getInstance().currentUser
 
-        tvHello.text = user!!.displayName.toString()
+        tvUID.text = FirebaseAuth.getInstance().uid
+        tvUserUID.text = user!!.uid
     }
 
     override fun onBackPressed() {

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "106678416684-jeqtec2bncf0qc3coh9u22bqv280v3vt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.azarquiel.fukkuapp",
+            "certificate_hash": "a341d9ae349a15aa118b6099666b8ec43fbf4abf"
+          }
+        },
+        {
           "client_id": "106678416684-n7pgj535p90fdm4f4v9ugpr3r978uqs6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
