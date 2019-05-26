@@ -10,8 +10,8 @@ import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_productos.*
 import kotlinx.android.synthetic.main.content_productos.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Class.Categoria
-import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
 
@@ -21,7 +21,6 @@ class ProductosActivity : AppCompatActivity() {
     private lateinit var adapter : CustomAdapterProductos
     private lateinit var arrayProductos : ArrayList<Producto>
     private lateinit var db: FirebaseFirestore
-    private lateinit var categoria:Categoria
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +42,6 @@ class ProductosActivity : AppCompatActivity() {
         }else if(accion == TUS_PRODUCTOS_FAVORITOS){
             //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
             cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS_FAVORITOS)
-        }else if(accion == ACCION_PRODUCTOS_CATEGORIA){
-            categoria=intent.getSerializableExtra("categoria") as Categoria
-            cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
         }
     }
 
@@ -64,7 +60,7 @@ class ProductosActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         //Log.d("Jonay", "${document.data.getValue("Descripcion")}")
-                        arrayProductos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(
+                        arrayProductos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
                             CAMPO_DESCRIPCION)}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
                             CAMPO_FECHA)}","${document.data.getValue(CAMPO_LATITUD)}","${document.data.getValue(
                             CAMPO_LONGITUD)}","${document.data.getValue(CAMPO_CATEGORIAID)}","${document.data.getValue(

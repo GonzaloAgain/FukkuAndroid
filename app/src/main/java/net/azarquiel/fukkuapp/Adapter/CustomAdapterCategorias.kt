@@ -9,8 +9,7 @@ import android.view.ViewGroup
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.categoriasrow.view.*
-import kotlinx.android.synthetic.main.productosrow.view.*
-import net.azarquiel.fukkuapp.Class.Categoria
+import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.R
 
 class CustomAdapterCategorias(val context: Context,

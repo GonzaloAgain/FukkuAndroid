@@ -19,9 +19,9 @@ import com.google.firebase.storage.StorageReference
 import com.robertlevonyan.components.picker.ItemModel
 import com.robertlevonyan.components.picker.PickerDialog
 import kotlinx.android.synthetic.main.activity_add_producto.*
-import net.azarquiel.fukkuapp.Class.Categoria
-import net.azarquiel.fukkuapp.Class.Imagen
-import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.Model.Imagen
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 import org.jetbrains.anko.toast
@@ -48,7 +48,7 @@ class AddProductoActivity : AppCompatActivity(){
         db = FirebaseFirestore.getInstance()
 
         // Create persistent LocationManager reference
-        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?;
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
         var permissionCheck=ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -70,19 +70,12 @@ class AddProductoActivity : AppCompatActivity(){
         override fun onLocationChanged(location: Location) {
             Log.d("Jonay", "${location.longitude}      ${location.latitude}")
             addProducto(location.longitude,location.latitude)
-            //circulo(location.longitude,location.latitude)
         }
         override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
         override fun onProviderEnabled(provider: String) {}
         override fun onProviderDisabled(provider: String) {
             toast("Tienes que activar la ubicación del movil")
         }
-    }
-
-    private fun circulo(longitude: Double, latitude: Double){
-        var distanceHeight = FloatArray(2)
-        Location.distanceBetween(latitude, longitude, 43.5672, -87.9816, distanceHeight)
-        Log.d("Jonay", "${distanceHeight[0]}")
     }
 
     private fun cargarCategorias(){
@@ -131,7 +124,7 @@ class AddProductoActivity : AppCompatActivity(){
     private fun addProducto(longitude: Double, latitude: Double){
         if(veces == 0){
             val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
-            var producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"${latitude}",
+            var producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}", "nombre Usuario","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"${latitude}",
                 "${longitude}",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,"KGqBjsuqe0747tCzBeyu")
             addProductoColeccionProductos(producto)
             addProductoColeccionUsuarios(producto)

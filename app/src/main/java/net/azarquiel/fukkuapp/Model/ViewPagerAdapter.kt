@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Class
+package net.azarquiel.fukkuapp.Model
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager

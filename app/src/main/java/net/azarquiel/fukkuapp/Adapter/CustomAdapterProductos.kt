@@ -2,7 +2,6 @@ package net.azarquiel.fukkuapp.Adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.productosrow.view.*
-import net.azarquiel.fukkuapp.Class.Imagen
-import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.Model.Imagen
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 

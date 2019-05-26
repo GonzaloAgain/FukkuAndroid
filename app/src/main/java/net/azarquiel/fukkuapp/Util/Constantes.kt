@@ -29,6 +29,7 @@ const val CAMPO_PRECIO="precio"
 const val CAMPO_FECHA="fecha"
 const val CAMPO_CATEGORIAID="categoriaId"
 const val CAMPO_USUARIOID="usuarioId"
+const val CAMPO_NOMBREUSUARIO="nombreUsuario"
 
-const val ACCION_PRODUCTOS_CATEGORIA="accion productos de una categoria"
+const val METROS_PRODUCTOS_CERCANOS = 10000
 

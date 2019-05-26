@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Class
+package net.azarquiel.fukkuapp.Model
 
 import java.io.Serializable
 
@@ -24,6 +24,7 @@ data class Usuario(
 data class Producto(
     val id : String,
     val nombre : String,
+    val nombreUsuario : String,
     val descripcion : String,
     val precio : String,
     val fecha : String,

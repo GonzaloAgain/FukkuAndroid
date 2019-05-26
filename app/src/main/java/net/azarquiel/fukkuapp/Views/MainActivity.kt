@@ -13,8 +13,8 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import net.azarquiel.fukkuapp.Class.Categoria
-import net.azarquiel.fukkuapp.Class.ViewPagerAdapter
+import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.Model.ViewPagerAdapter
 import net.azarquiel.fukkuapp.Fragments.Fragment_categorias
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania

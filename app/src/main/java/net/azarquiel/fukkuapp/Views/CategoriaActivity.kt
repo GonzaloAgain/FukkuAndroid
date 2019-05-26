@@ -11,7 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_categoria.*
 import kotlinx.android.synthetic.main.content_categoria.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
-import net.azarquiel.fukkuapp.Class.Categoria
+import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
 

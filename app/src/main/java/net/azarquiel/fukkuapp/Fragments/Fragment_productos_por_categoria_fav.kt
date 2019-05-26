@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_productos_por_categoria_fav.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Class.Categoria
-import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 
@@ -71,7 +71,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
                     if (task.isSuccessful) {
                         for (document in task.result!!) {
                             arrayProductos.add(
-                                Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(
+                                Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
                                     CAMPO_DESCRIPCION
                                 )}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
                                     CAMPO_FECHA

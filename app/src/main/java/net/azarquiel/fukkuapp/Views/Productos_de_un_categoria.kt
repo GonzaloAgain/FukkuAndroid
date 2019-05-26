@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,8 +12,8 @@ import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_productos_de_un_categoria.*
 import kotlinx.android.synthetic.main.content_productos_de_un_categoria.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Class.Categoria
-import net.azarquiel.fukkuapp.Class.Producto
+import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 
@@ -43,6 +44,7 @@ class Productos_de_un_categoria : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_favoritos, menu)
+        checkFavorite(menu)
         return true
     }
 
@@ -58,14 +60,14 @@ class Productos_de_un_categoria : AppCompatActivity() {
     }
 
     private fun addDeleteFavoritos(item: MenuItem) : Boolean{
-        isFavorito=!isFavorito
-        if(isFavorito){
+        if(!isFavorito){
             addToCategoriasFavoritas()
             item.title = resources.getString(R.string.deleteFavortios)
         }else{
             deleteToCategoriasFavoritas()
             item.title = resources.getString(R.string.addFavortios)
         }
+        isFavorito = !isFavorito
         return true
     }
 
@@ -85,7 +87,7 @@ class Productos_de_un_categoria : AppCompatActivity() {
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         //Log.d("Jonay", "${document.data.getValue("Descripcion")}")
-                        arrayProductos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(
+                        arrayProductos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
                             CAMPO_DESCRIPCION
                         )}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
                             CAMPO_FECHA
@@ -108,5 +110,22 @@ class Productos_de_un_categoria : AppCompatActivity() {
     private fun deleteToCategoriasFavoritas(){
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).delete()
+    }
+
+    private fun checkFavorite(menu: Menu) {
+        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+            .document(categoria.id).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    var document = task.result
+                    if(document!!.exists()){
+                        isFavorito = true
+                        menu.findItem(R.id.action_favorito).title = resources.getString(R.string.deleteFavortios)
+                    }else{
+                        isFavorito = false
+                        menu.findItem(R.id.action_favorito).title = resources.getString(R.string.addFavortios)
+                    }
+                }
+            }
     }
 }
