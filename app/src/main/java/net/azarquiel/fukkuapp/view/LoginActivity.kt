@@ -11,6 +11,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_login.*
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.service.MyFirebaseInstanceIdService
+import org.jetbrains.anko.toast
 
 class LoginActivity : AppCompatActivity() {
 

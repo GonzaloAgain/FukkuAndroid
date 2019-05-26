@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.content_main.*
+import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.FirestoreUtil
 
@@ -27,12 +28,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         btnCreateChannel.setOnClickListener {
             //meterlo en el utils
-            //FirestoreUtil.getOrCreateChatChannel("uDi9Nbm2Pjb1zUi5f7SAOSu57wY2"){ channelID ->
-            FirestoreUtil.getOrCreateChatChannel("nWoa2oV5AzVxkiGTEPv6q39J9XM2"){ channelID ->
+            //FirestoreUtil.getOrCreateChatChannel("uDi9Nbm2Pjb1zUi5f7SAOSu57wY2","Hola  2019-05-23 22:34"){ channelID ->
+            FirestoreUtil.getOrCreateChatChannel("nWoa2oV5AzVxkiGTEPv6q39J9XM2","Hola  2019-05-23 22:34"){ channelID ->
                 val intent = Intent(this, ChatActivity::class.java)
-                intent.putExtra("channelID", channelID)
+                intent.putExtra(AppConstants.CHANNEL_ID, channelID)
                 startActivity(intent)
             }
+        }
+
+        btnAllChats.setOnClickListener {
+            val intent = Intent(this, OpenChatsActivity::class.java)
+            startActivity(intent)
         }
 
         fab.setOnClickListener { view ->
@@ -54,8 +60,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun pintar() {
         val user = FirebaseAuth.getInstance().currentUser
 
-        tvUID.text = FirebaseAuth.getInstance().uid
-        tvUserUID.text = user!!.uid
+        tvUID.text = "UID: ${FirebaseAuth.getInstance().uid}"
+        tvUserUID.text = "User UID: ${user!!.uid}"
     }
 
     override fun onBackPressed() {

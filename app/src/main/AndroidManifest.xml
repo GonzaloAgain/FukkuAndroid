@@ -4,12 +4,14 @@
 
     <application
             android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/ic_fukku_logo"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
+            android:roundIcon="@mipmap/ic_fukku_logo"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
+        <activity android:name=".view.OpenChatsActivity">
+        </activity>
         <activity
                 android:name=".view.SplashActivity"
                 android:theme="@style/SplashTheme">
@@ -20,8 +22,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.ChatActivity">
+            <intent-filter>
+                <action android:name="ChatActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
-        <activity android:name=".view.LoginActivity">
+        <activity android:name=".view.LoginActivity"
+                  android:label="@string/app_name"
+                  android:theme="@style/AppTheme.NoActionBar">>
         </activity>
         <activity
                 android:name=".view.CreateUserActivity"
@@ -32,7 +40,10 @@
                 android:name=".view.MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
-        </activity> <!-- FCM -->
+        </activity>
+
+
+        <!-- FCM -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
                 android:resource="@drawable/ic_menu_share"/>

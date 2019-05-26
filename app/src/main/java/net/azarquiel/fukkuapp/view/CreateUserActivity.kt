@@ -1,8 +1,8 @@
 package net.azarquiel.fukkuapp.view
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.activity_create_user.*
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.User
 import net.azarquiel.fukkuapp.util.FirestoreUtil
-import org.jetbrains.anko.toast
 
 class CreateUserActivity : AppCompatActivity() {
 

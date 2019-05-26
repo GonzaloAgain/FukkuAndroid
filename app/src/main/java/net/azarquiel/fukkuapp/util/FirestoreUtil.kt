@@ -1,14 +1,14 @@
 package net.azarquiel.fukkuapp.util
 
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import net.azarquiel.fukkuapp.view.CreateUserActivity
+import net.azarquiel.fukkuapp.model.Chat
 import net.azarquiel.fukkuapp.model.ChatChannel
 import net.azarquiel.fukkuapp.model.Message
 import net.azarquiel.fukkuapp.model.User
+import net.azarquiel.fukkuapp.view.CreateUserActivity
 
 object FirestoreUtil {
     private val firestoreInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
@@ -26,11 +26,12 @@ object FirestoreUtil {
     private val chatChannelCollectionRef = firestoreInstance.collection("Canales")
 
     fun getOrCreateChatChannel( otherUserID: String,
+                                productID: String,
                                 onComplete: (channelID: String) -> Unit){
         currentUserDocRef.collection("Chats")
-            .document(otherUserID).get().addOnSuccessListener {
+            .document(productID).get().addOnSuccessListener {
                 if (it.exists()){
-                    onComplete(it["channelID"] as String)
+                    onComplete(it.toObject(Chat::class.java)!!.channelID)
                     return@addOnSuccessListener
                 }
 
@@ -39,15 +40,17 @@ object FirestoreUtil {
                 val newChannel = chatChannelCollectionRef.document()
                 newChannel.set(ChatChannel(mutableListOf(currentUserID, otherUserID)))
 
+                val chat = Chat(newChannel.id,productID)
+
                 currentUserDocRef
                     .collection("Chats")
-                    .document(otherUserID)
-                    .set(mapOf("channelID" to newChannel.id))
+                    .document(productID)
+                    .set(chat)
 
                 firestoreInstance.collection("Usuarios").document(otherUserID)
                     .collection("Chats")
-                    .document(currentUserID)
-                    .set(mapOf("channelID" to newChannel.id))
+                    .document(productID)
+                    .set(chat)
 
                 onComplete(newChannel.id)
             }

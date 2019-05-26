@@ -9,10 +9,12 @@ import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_chat.*
+import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.Message
 import net.azarquiel.fukkuapp.util.FirestoreUtil
 import net.azarquiel.fukkuapp.viewmodel.MessagesAdapter
+import org.jetbrains.anko.toast
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -25,7 +27,8 @@ class ChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
 
         val db = FirebaseFirestore.getInstance()
-        val channelID = intent.getSerializableExtra("channelID") as String
+        val channelID = intent.getStringExtra(AppConstants.CHANNEL_ID)
+        val otherUserID = intent.getStringExtra(AppConstants.OTHER_USER_ID)
 
         adapter = MessagesAdapter(this, R.layout.row_message)
         rvMessages.layoutManager = LinearLayoutManager(this)
@@ -51,7 +54,13 @@ class ChatActivity : AppCompatActivity() {
 
 
         btnSendMessage.setOnClickListener {
-            val mensaje = Message(etMessage.text.toString(),Calendar.getInstance().time,FirebaseAuth.getInstance().currentUser!!.uid)
+
+            val mensaje = Message(etMessage.text.toString(),
+                Calendar.getInstance().time,
+                FirebaseAuth.getInstance().currentUser!!.uid,
+                otherUserID,
+                FirebaseAuth.getInstance().currentUser!!.displayName!!,
+                channelID)
             etMessage.text.clear()
 
             FirestoreUtil.sendMessage(mensaje,channelID)
