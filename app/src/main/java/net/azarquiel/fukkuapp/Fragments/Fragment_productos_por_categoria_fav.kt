@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_productos_por_categoria_fav.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.Model.Categoria
@@ -48,6 +49,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         db=FirebaseFirestore.getInstance()
         //Este metodo de sacar colecciones de interes puede ser static porque se repite dos veces To Do
         db.collection(COLECCION_USUARIOS).document(idUsuario).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+            .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -70,17 +72,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         for (document in task.result!!) {
-                            arrayProductos.add(
-                                Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
-                                    CAMPO_DESCRIPCION
-                                )}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
-                                    CAMPO_FECHA
-                                )}","${document.data.getValue(CAMPO_LATITUD)}","${document.data.getValue(
-                                    CAMPO_LONGITUD
-                                )}","${document.data.getValue(CAMPO_CATEGORIAID)}","${document.data.getValue(
-                                    CAMPO_USUARIOID
-                                )}")
-                            )
+                            arrayProductos.add(document.toObject(Producto::class.java))
                         }
                         adapter.setProductos(arrayProductos)
                     }

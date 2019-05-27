@@ -18,6 +18,7 @@ import net.azarquiel.fukkuapp.Model.ViewPagerAdapter
 import net.azarquiel.fukkuapp.Fragments.Fragment_categorias
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 
@@ -124,6 +125,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val categoria=v.tag as Categoria
         var intent= Intent(this, Productos_de_un_categoria::class.java)
         intent.putExtra("categoria", categoria)
+        startActivity(intent)
+    }
+
+    fun pinchaProducto(v: View){
+        val producto = v.tag as Producto
+        var intent= Intent(this, DetailProductActivity::class.java)
+        intent.putExtra("producto", producto)
         startActivity(intent)
     }
 }

@@ -3,9 +3,9 @@ package net.azarquiel.fukkuapp.Model
 import java.io.Serializable
 
 data class Categoria(
-    val id : String,
-    val nombre : String,
-    val icono : String
+    val id : String = "",
+    val nombre : String = "",
+    val icono : String = ""
 ):Serializable
 
 data class Usuario(
@@ -19,20 +19,21 @@ data class Usuario(
     val nacimiento : String,
     val latitud : String,
     val longitud : String
-)
+):Serializable
 
 data class Producto(
-    val id : String,
-    val nombre : String,
-    val nombreUsuario : String,
-    val descripcion : String,
-    val precio : String,
-    val fecha : String,
-    val latitud : String,
-    val longitud : String,
-    val categoriaId : String,
-    val usuarioId : String
-)
+    val id : String = "",
+    val nombre : String = "",
+    val nombreUsuario : String = "",
+    val descripcion : String = "",
+    val precio : String = "",
+    val fecha : String = "",
+    val latitud : String = "",
+    val longitud : String = "",
+    val categoriaId : String = "",
+    val nombreCategoria : String = "",
+    val usuarioId : String = ""
+):Serializable
 
 data class Imagen(
     val id : String,

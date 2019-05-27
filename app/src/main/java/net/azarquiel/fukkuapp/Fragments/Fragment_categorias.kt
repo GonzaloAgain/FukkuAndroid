@@ -48,8 +48,7 @@ class Fragment_categorias : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
-                        arrayCategorias.add(Categoria(document.id,"${document.data.getValue(CAMPO_NOMBRE)}","${document.data.getValue(
-                            CAMPO_ICONO)}"))
+                        arrayCategorias.add(document.toObject(Categoria::class.java))
                     }
                     adapter.setCategorias(arrayCategorias)
                 }

@@ -18,6 +18,11 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
+                android:name=".Views.DetailProductActivity"
+                android:label="@string/title_activity_detail_product"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
                 android:name=".Views.Productos_de_un_categoria"
                 android:label="@string/title_activity_productos_de_un_categoria"
                 android:theme="@style/AppTheme.NoActionBar">

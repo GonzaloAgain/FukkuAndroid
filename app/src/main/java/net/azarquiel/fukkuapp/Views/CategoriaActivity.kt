@@ -5,20 +5,24 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 
 import kotlinx.android.synthetic.main.activity_categoria.*
 import kotlinx.android.synthetic.main.content_categoria.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
 import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
 
 class CategoriaActivity : AppCompatActivity() {
 
     private lateinit var adapter:CustomAdapterCategorias
-    private lateinit var arrayCategorias : ArrayList<Categoria>
     private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,9 +47,23 @@ class CategoriaActivity : AppCompatActivity() {
     }
 
     private fun cargarCategoriasDeInteres(){
-        arrayCategorias= ArrayList()
-        //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+            .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
+                if (e != null) {
+                    Log.w("TAG", "Listen failed.", e)
+                    return@EventListener
+                }
+
+                val arrayCategorias = ArrayList<Categoria>()
+                for (document in value!!) {
+                    arrayCategorias.add(document.toObject(Categoria::class.java))
+                }
+
+                adapter.setCategorias(arrayCategorias)
+            })
+
+        //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
+        /*db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -56,7 +74,7 @@ class CategoriaActivity : AppCompatActivity() {
                     }
                     adapter.setCategorias(arrayCategorias)
                 }
-            }
+            }*/
     }
 
     fun pulsarCategoria(v: View){

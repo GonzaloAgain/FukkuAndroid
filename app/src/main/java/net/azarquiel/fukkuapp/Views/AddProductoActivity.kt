@@ -1,6 +1,7 @@
 package net.azarquiel.fukkuapp.Views
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -12,6 +13,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -24,11 +26,12 @@ import net.azarquiel.fukkuapp.Model.Imagen
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
+import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.toast
 import java.util.*
 import java.text.SimpleDateFormat
 
-
+@Suppress("DEPRECATION")
 class AddProductoActivity : AppCompatActivity(){
 
     private lateinit var db: FirebaseFirestore
@@ -40,6 +43,7 @@ class AddProductoActivity : AppCompatActivity(){
     private var imagen: Imagen?=null
     private var locationManager : LocationManager? = null
     private var veces = 0
+    private lateinit var p: ProgressDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,8 +111,9 @@ class AddProductoActivity : AppCompatActivity(){
     private fun comprobarCampos() {
         if(!etNombreProducto.text.isNullOrBlank() && !etDescripcionProducto.text.isNullOrBlank() && !etPrecioProducto.text.isNullOrBlank() && !categoriaElegida.isNullOrEmpty()){
             try {
+                inicia("Uploading product")
                 // Request location updates
-                locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+                locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1L, 0f, locationListener)
 
             } catch(ex: SecurityException) {
                 var permissionCheck=ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -123,15 +128,15 @@ class AddProductoActivity : AppCompatActivity(){
 
     private fun addProducto(longitude: Double, latitude: Double){
         if(veces == 0){
-            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm")
             var producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}", "nombre Usuario","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"${latitude}",
-                "${longitude}",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,"KGqBjsuqe0747tCzBeyu")
+                "${longitude}",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id, arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,"KGqBjsuqe0747tCzBeyu")
             addProductoColeccionProductos(producto)
             addProductoColeccionUsuarios(producto)
             addProductoColeccionCategorias(producto)
-            finish()
             veces = 1
-            Log.d("Jonay", "${veces}")
+            finish()
+            finaliza()
         }
     }
 
@@ -182,6 +187,7 @@ class AddProductoActivity : AppCompatActivity(){
     }
 
     private fun subirImagen(uri : Uri){
+        inicia("Uploading image")
         var storageRef = FirebaseStorage.getInstance().reference
         riversRef = storageRef.child("images").child(uri.lastPathSegment)
         var uploadTask = riversRef.putFile(uri)
@@ -191,7 +197,20 @@ class AddProductoActivity : AppCompatActivity(){
             Log.d("Jonay", uploadTask.exception.toString())
         }.addOnSuccessListener {
             Log.d("Jonay", "Se ha debido de subir")
+            finaliza()
         }
         imagen= Imagen(riversRef.name,riversRef.path,riversRef.bucket)
+    }
+
+    private fun inicia(texto:String){
+        p=indeterminateProgressDialog(texto)
+        p.show()
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    private fun finaliza(){
+        p.hide()
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }

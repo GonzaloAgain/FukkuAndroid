@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_productos_cerca_de_ti.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.Model.Producto
@@ -96,17 +97,13 @@ class Fragment_productos_por_cercania : Fragment(){
         locationUser.latitude=latitud
         locationUser.longitude=longitud
         
-        db.collection(COLECCION_PRODUCTOS).get()
+        db.collection(COLECCION_PRODUCTOS).orderBy(CAMPO_FECHA, Query.Direction.DESCENDING).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         if(checkDistance("${document.data.getValue(CAMPO_LATITUD)}", "${document.data.getValue(
                                 CAMPO_LONGITUD)}")){
-                            arrayProductosCercanos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
-                                CAMPO_DESCRIPCION)}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
-                                CAMPO_FECHA)}","${document.data.getValue(CAMPO_LATITUD)}","${document.data.getValue(
-                                CAMPO_LONGITUD)}","${document.data.getValue(CAMPO_CATEGORIAID)}","${document.data.getValue(
-                                CAMPO_USUARIOID)}"))
+                            arrayProductosCercanos.add(document.toObject(Producto::class.java))
                         }
                     }
                     adapter.setProductos(arrayProductosCercanos)

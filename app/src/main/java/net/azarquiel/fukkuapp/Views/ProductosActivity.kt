@@ -1,11 +1,16 @@
 package net.azarquiel.fukkuapp.Views
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
+import android.view.View
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 
 import kotlinx.android.synthetic.main.activity_productos.*
 import kotlinx.android.synthetic.main.content_productos.*
@@ -19,7 +24,6 @@ class ProductosActivity : AppCompatActivity() {
 
     private lateinit var accion : String
     private lateinit var adapter : CustomAdapterProductos
-    private lateinit var arrayProductos : ArrayList<Producto>
     private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +56,22 @@ class ProductosActivity : AppCompatActivity() {
     }
 
     private fun cargarProductos(coleccion:String,id:String,subcoleccion:String){
-        arrayProductos=ArrayList()
         db.collection(coleccion).document(id).collection(subcoleccion)
+            .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
+            .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
+                if (e != null) {
+                    Log.w("TAG", "Listen failed.", e)
+                    return@EventListener
+                }
+
+                val arrayProductos = ArrayList<Producto>()
+                for (document in value!!) {
+                    arrayProductos.add(document.toObject(Producto::class.java))
+                }
+
+                adapter.setProductos(arrayProductos)
+            })
+        /*db.collection(coleccion).document(id).collection(subcoleccion)
             .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener { task ->
@@ -63,11 +81,18 @@ class ProductosActivity : AppCompatActivity() {
                         arrayProductos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
                             CAMPO_DESCRIPCION)}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
                             CAMPO_FECHA)}","${document.data.getValue(CAMPO_LATITUD)}","${document.data.getValue(
-                            CAMPO_LONGITUD)}","${document.data.getValue(CAMPO_CATEGORIAID)}","${document.data.getValue(
+                            CAMPO_LONGITUD)}","${document.data.getValue(CAMPO_CATEGORIAID)}","${document.data.getValue(CAMPO_NOMBRECATEGORIA)}","${document.data.getValue(
                             CAMPO_USUARIOID)}"))
                     }
                     adapter.setProductos(arrayProductos)
                 }
-            }
+            }*/
+    }
+
+    fun pinchaProducto(v: View){
+        val producto = v.tag as Producto
+        var intent= Intent(this, DetailProductActivity::class.java)
+        intent.putExtra("producto", producto)
+        startActivity(intent)
     }
 }

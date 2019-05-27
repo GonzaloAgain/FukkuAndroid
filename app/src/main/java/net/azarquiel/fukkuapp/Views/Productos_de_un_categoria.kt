@@ -1,5 +1,6 @@
 package net.azarquiel.fukkuapp.Views
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_productos_de_un_categoria.*
@@ -16,6 +18,7 @@ import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
+import org.jetbrains.anko.toast
 
 class Productos_de_un_categoria : AppCompatActivity() {
 
@@ -87,15 +90,7 @@ class Productos_de_un_categoria : AppCompatActivity() {
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         //Log.d("Jonay", "${document.data.getValue("Descripcion")}")
-                        arrayProductos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
-                            CAMPO_DESCRIPCION
-                        )}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
-                            CAMPO_FECHA
-                        )}","${document.data.getValue(CAMPO_LATITUD)}","${document.data.getValue(
-                            CAMPO_LONGITUD
-                        )}","${document.data.getValue(CAMPO_CATEGORIAID)}","${document.data.getValue(
-                            CAMPO_USUARIOID
-                        )}"))
+                        arrayProductos.add(document.toObject(Producto::class.java))
                     }
                     adapter.setProductos(arrayProductos)
                 }
@@ -127,5 +122,12 @@ class Productos_de_un_categoria : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    fun pinchaProducto(v: View){
+        val producto = v.tag as Producto
+        var intent= Intent(this, DetailProductActivity::class.java)
+        intent.putExtra("producto", producto)
+        startActivity(intent)
     }
 }
