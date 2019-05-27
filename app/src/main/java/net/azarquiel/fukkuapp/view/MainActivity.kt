@@ -29,7 +29,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         btnCreateChannel.setOnClickListener {
             //meterlo en el utils
             //FirestoreUtil.getOrCreateChatChannel("uDi9Nbm2Pjb1zUi5f7SAOSu57wY2","Hola  2019-05-23 22:34"){ channelID ->
-            FirestoreUtil.getOrCreateChatChannel("nWoa2oV5AzVxkiGTEPv6q39J9XM2","Hola  2019-05-23 22:34"){ channelID ->
+            FirestoreUtil.getOrCreateChatChannel("5RiNeoEgracCG1d2QklVoHA1USk1","pp  2019-05-23 22:34"){ channelID ->
+                //toast("Haber que me saca: ${channelID}")
                 val intent = Intent(this, ChatActivity::class.java)
                 intent.putExtra(AppConstants.CHANNEL_ID, channelID)
                 startActivity(intent)

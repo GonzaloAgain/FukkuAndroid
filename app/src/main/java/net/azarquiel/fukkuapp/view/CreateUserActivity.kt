@@ -9,9 +9,11 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_create_user.*
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.User
+import net.azarquiel.fukkuapp.service.MyFirebaseInstanceIdService
 import net.azarquiel.fukkuapp.util.FirestoreUtil
 
 class CreateUserActivity : AppCompatActivity() {
@@ -70,6 +72,10 @@ class CreateUserActivity : AppCompatActivity() {
         user = auth.currentUser!!
         val userFirestore = User(name, surnames, email, user.uid, mutableListOf())
         FirestoreUtil.createUserFirestore(userFirestore)
+
+        val registrationToken = FirebaseInstanceId.getInstance().token
+        MyFirebaseInstanceIdService.addTokentoFireStore(registrationToken)
+
         addDisplayName()
     }
 
