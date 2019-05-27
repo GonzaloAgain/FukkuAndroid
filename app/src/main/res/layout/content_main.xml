@@ -26,7 +26,7 @@
             android:layout_marginStart="24dp" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="24dp" android:layout_marginRight="24dp"/>
     <Button
-            android:text="Iniciar Chat con Gonzalo"
+            android:text="Iniciar Chat con Usuario 2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnCreateChannel"
