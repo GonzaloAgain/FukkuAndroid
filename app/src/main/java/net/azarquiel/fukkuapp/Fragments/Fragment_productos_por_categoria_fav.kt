@@ -49,16 +49,11 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         db=FirebaseFirestore.getInstance()
         //Este metodo de sacar colecciones de interes puede ser static porque se repite dos veces To Do
         db.collection(COLECCION_USUARIOS).document(idUsuario).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
-            .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
-                        arrayCategoriasInteres.add(
-                            Categoria(document.id, "${document.data.getValue(CAMPO_NOMBRE)}","${document.data.getValue(
-                                CAMPO_ICONO
-                            )}")
-                        )
+                        arrayCategoriasInteres.add(document.toObject(Categoria::class.java))
                     }
                     cargarProductos()
                 }
@@ -74,7 +69,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
                         for (document in task.result!!) {
                             arrayProductos.add(document.toObject(Producto::class.java))
                         }
-                        adapter.setProductos(arrayProductos)
+                        adapter.setProductos(arrayProductos.sortedBy {it.fecha}.reversed())
                     }
                 }
         }

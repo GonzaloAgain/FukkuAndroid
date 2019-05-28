@@ -32,7 +32,8 @@ data class Producto(
     val longitud : String = "",
     val categoriaId : String = "",
     val nombreCategoria : String = "",
-    val usuarioId : String = ""
+    val usuarioId : String = "",
+    val imagen : String = ""
 ):Serializable
 
 data class Imagen(

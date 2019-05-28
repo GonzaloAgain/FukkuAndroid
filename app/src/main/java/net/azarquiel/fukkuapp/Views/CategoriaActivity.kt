@@ -61,20 +61,6 @@ class CategoriaActivity : AppCompatActivity() {
 
                 adapter.setCategorias(arrayCategorias)
             })
-
-        //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
-        /*db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    for (document in task.result!!) {
-                        //Log.d("Jonay", "${document.data.getValue("Descripcion")}")
-                        arrayCategorias.add(Categoria(document.id, "${document.data.getValue(CAMPO_NOMBRE)}","${document.data.getValue(
-                            CAMPO_ICONO)}"))
-                    }
-                    adapter.setCategorias(arrayCategorias)
-                }
-            }*/
     }
 
     fun pulsarCategoria(v: View){

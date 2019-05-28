@@ -42,7 +42,7 @@ class CustomAdapterProductos(val context: Context,
 
     class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Producto){
-            cargarImagen(dataItem.id,itemView)
+            mostrarImagen(itemView, dataItem.imagen)
             itemView.tvNombreProducto.text=dataItem.nombre
             itemView.tvDescripcionProducto.text=dataItem.descripcion
             itemView.tvFechaProducto.text=dataItem.fecha
@@ -50,28 +50,11 @@ class CustomAdapterProductos(val context: Context,
             itemView.tag=dataItem
         }
 
-        private fun cargarImagen(id:String,itemView:View){
-            var db=FirebaseFirestore.getInstance()
-            var imagen:Imagen?=null
-
-            db.collection(COLECCION_PRODUCTOS).document(id).collection(SUBCOLECCION_IMAGENES).limit(1)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        for(document in task.result!!) {
-                            imagen= Imagen("${document.data.getValue(CAMPO_ID)}","${document.data.getValue(CAMPO_IMAGEN)}","${document.data.getValue(
-                                CAMPO_PRODUCTOID)}")
-                        }
-                        mostrarImagen(itemView,imagen)
-                    }
-                }
-        }
-
-        private fun mostrarImagen(itemView:View,imagen:Imagen?){
+        private fun mostrarImagen(itemView:View,imagen:String?){
             imagen?.let {
                 var storageRef = FirebaseStorage.getInstance().reference
 
-                storageRef.child(imagen.imagen).downloadUrl.addOnSuccessListener {
+                storageRef.child(imagen).downloadUrl.addOnSuccessListener {
                     Picasso.with(context).load(it).into(itemView.ivImagenProducto)
                 }.addOnFailureListener {
                     // Handle any errors

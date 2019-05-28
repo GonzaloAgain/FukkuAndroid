@@ -40,10 +40,11 @@ class AddProductoActivity : AppCompatActivity(){
     private var categoriaElegida:String?=null
     private lateinit var pickerDialog: PickerDialog
     private lateinit var riversRef: StorageReference
-    private var imagen: Imagen?=null
+    private var imagenRuta: String?=null
     private var locationManager : LocationManager? = null
     private var veces = 0
     private lateinit var p: ProgressDialog
+    private var uriImagen: Uri?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,12 +129,21 @@ class AddProductoActivity : AppCompatActivity(){
 
     private fun addProducto(longitude: Double, latitude: Double){
         if(veces == 0){
+            if(uriImagen != null){
+                subirImagen()
+            }
             val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm")
-            var producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}", "nombre Usuario","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"${latitude}",
-                "${longitude}",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id, arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,"KGqBjsuqe0747tCzBeyu")
-            addProductoColeccionProductos(producto)
-            addProductoColeccionUsuarios(producto)
-            addProductoColeccionCategorias(producto)
+            var producto:Producto? = null
+            imagenRuta?.let {
+                producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}", "nombre Usuario","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"${latitude}",
+                    "${longitude}",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id, arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,"KGqBjsuqe0747tCzBeyu", it)
+            }?: run {
+                producto=Producto("${etNombreProducto.text} ${formatter.format(Date())}","${etNombreProducto.text}", "nombre Usuario","${etDescripcionProducto.text}","${etPrecioProducto.text}",formatter.format(Date()),"${latitude}",
+                    "${longitude}",arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id, arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,"KGqBjsuqe0747tCzBeyu", "")
+            }
+            addProductoColeccionProductos(producto!!)
+            addProductoColeccionUsuarios(producto!!)
+            addProductoColeccionCategorias(producto!!)
             veces = 1
             finish()
             finaliza()
@@ -142,25 +152,15 @@ class AddProductoActivity : AppCompatActivity(){
 
     private fun addProductoColeccionProductos(producto:Producto){
         db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
-        if(imagen != null){
-            db.collection(COLECCION_PRODUCTOS).document(producto.id).collection(SUBCOLECCION_IMAGENES).document(riversRef.name).set(imagen!!)
-        }
     }
 
     private fun addProductoColeccionUsuarios(producto: Producto){
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
-        if(imagen != null){
-            db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS).document(producto.id).collection(SUBCOLECCION_IMAGENES).document(riversRef.name).set(imagen!!)
-        }
     }
 
     private fun addProductoColeccionCategorias(producto: Producto){
         db.collection(COLECCION_CATEGORIA).document(arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id).collection(
             SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
-        if(imagen != null){
-            db.collection(COLECCION_CATEGORIA).document(arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id).collection(
-                SUBCOLECCION_PRODUCTOS).document(producto.id).collection(SUBCOLECCION_IMAGENES).document(riversRef.name).set(imagen!!)
-        }
     }
 
     private fun picker(){
@@ -175,10 +175,12 @@ class AddProductoActivity : AppCompatActivity(){
         pickerDialog.setPickerCloseListener { type, uri ->
             when (type) {
                 ItemModel.ITEM_CAMERA -> {
-                    subirImagen(uri)
+                    uriImagen=uri
+                    ivAddProduct.setImageURI(uriImagen)
                 }
                 ItemModel.ITEM_GALLERY -> {
-                    subirImagen(uri)
+                    uriImagen=uri
+                    ivAddProduct.setImageURI(uriImagen)
                 }
             }
         }
@@ -186,11 +188,11 @@ class AddProductoActivity : AppCompatActivity(){
         pickerDialog.show(supportFragmentManager, "")
     }
 
-    private fun subirImagen(uri : Uri){
+    private fun subirImagen(){
         inicia("Uploading image")
         var storageRef = FirebaseStorage.getInstance().reference
-        riversRef = storageRef.child("images").child(uri.lastPathSegment)
-        var uploadTask = riversRef.putFile(uri)
+        riversRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
+        var uploadTask = riversRef.putFile(uriImagen!!)
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener {
             Log.d("Jonay", "Ha dado un fallo")
@@ -199,18 +201,18 @@ class AddProductoActivity : AppCompatActivity(){
             Log.d("Jonay", "Se ha debido de subir")
             finaliza()
         }
-        imagen= Imagen(riversRef.name,riversRef.path,riversRef.bucket)
+        imagenRuta = riversRef.path
     }
 
     private fun inicia(texto:String){
         p=indeterminateProgressDialog(texto)
-        p.show()
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        p.show()
     }
 
     private fun finaliza(){
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         p.hide()
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 }
