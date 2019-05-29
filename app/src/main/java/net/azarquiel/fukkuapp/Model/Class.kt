@@ -35,9 +35,3 @@ data class Producto(
     val usuarioId : String = "",
     val imagen : String = ""
 ):Serializable
-
-data class Imagen(
-    val id : String,
-    val imagen : String,
-    val productoId : String
-)

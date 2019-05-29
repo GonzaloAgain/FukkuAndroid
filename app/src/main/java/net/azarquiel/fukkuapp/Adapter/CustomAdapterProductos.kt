@@ -5,14 +5,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.productosrow.view.*
-import net.azarquiel.fukkuapp.Model.Imagen
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.*
 
 class CustomAdapterProductos(val context: Context,
                     val layout: Int
@@ -50,16 +47,13 @@ class CustomAdapterProductos(val context: Context,
             itemView.tag=dataItem
         }
 
-        private fun mostrarImagen(itemView:View,imagen:String?){
-            imagen?.let {
+        private fun mostrarImagen(itemView:View,imagen:String){
+            if(imagen != ""){
                 var storageRef = FirebaseStorage.getInstance().reference
-
                 storageRef.child(imagen).downloadUrl.addOnSuccessListener {
                     Picasso.with(context).load(it).into(itemView.ivImagenProducto)
-                }.addOnFailureListener {
-                    // Handle any errors
                 }
-            }?: run {
+            }else{
                 itemView.ivImagenProducto.setImageResource(R.drawable.notfound)
             }
         }

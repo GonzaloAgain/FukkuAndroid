@@ -37,7 +37,7 @@ class Productos_de_un_categoria : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-
+        db = FirebaseFirestore.getInstance()
         categoria=intent.getSerializableExtra("categoria") as Categoria
         title = categoria.nombre
         crearAdapter()
@@ -81,7 +81,6 @@ class Productos_de_un_categoria : AppCompatActivity() {
     }
 
     private fun cargarProductos(coleccion:String,id:String,subcoleccion:String){
-        db = FirebaseFirestore.getInstance()
         arrayProductos=ArrayList()
         db.collection(coleccion).document(id).collection(subcoleccion)
             .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
@@ -126,8 +125,18 @@ class Productos_de_un_categoria : AppCompatActivity() {
 
     fun pinchaProducto(v: View){
         val producto = v.tag as Producto
-        var intent= Intent(this, DetailProductActivity::class.java)
-        intent.putExtra("producto", producto)
-        startActivity(intent)
+        db.collection(COLECCION_PRODUCTOS).document(producto.id).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    var document = task.result
+                    if(document!!.exists()){
+                        var intent= Intent(this, DetailProductActivity::class.java)
+                        intent.putExtra("producto", document.toObject(Producto::class.java))
+                        startActivity(intent)
+                    }else{
+                        toast("Es posible que el producto haya sido borrado")
+                    }
+                }
+            }
     }
 }

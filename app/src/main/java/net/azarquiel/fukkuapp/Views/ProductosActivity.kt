@@ -19,6 +19,7 @@ import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
+import org.jetbrains.anko.toast
 
 class ProductosActivity : AppCompatActivity() {
 
@@ -71,28 +72,22 @@ class ProductosActivity : AppCompatActivity() {
 
                 adapter.setProductos(arrayProductos)
             })
-        /*db.collection(coleccion).document(id).collection(subcoleccion)
-            .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    for (document in task.result!!) {
-                        //Log.d("Jonay", "${document.data.getValue("Descripcion")}")
-                        arrayProductos.add(Producto(document.id,"${document.data.getValue(CAMPO_NOMBRE)}", "${document.data.getValue(CAMPO_NOMBREUSUARIO)}","${document.data.getValue(
-                            CAMPO_DESCRIPCION)}","${document.data.getValue(CAMPO_PRECIO)}","${document.data.getValue(
-                            CAMPO_FECHA)}","${document.data.getValue(CAMPO_LATITUD)}","${document.data.getValue(
-                            CAMPO_LONGITUD)}","${document.data.getValue(CAMPO_CATEGORIAID)}","${document.data.getValue(CAMPO_NOMBRECATEGORIA)}","${document.data.getValue(
-                            CAMPO_USUARIOID)}"))
-                    }
-                    adapter.setProductos(arrayProductos)
-                }
-            }*/
     }
 
     fun pinchaProducto(v: View){
         val producto = v.tag as Producto
-        var intent= Intent(this, DetailProductActivity::class.java)
-        intent.putExtra("producto", producto)
-        startActivity(intent)
+        db.collection(COLECCION_PRODUCTOS).document(producto.id).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    var document = task.result
+                    if(document!!.exists()){
+                        var intent= Intent(this, DetailProductActivity::class.java)
+                        intent.putExtra("producto", document.toObject(Producto::class.java))
+                        startActivity(intent)
+                    }else{
+                        toast("Es posible que el producto haya sido borrado")
+                    }
+                }
+            }
     }
 }

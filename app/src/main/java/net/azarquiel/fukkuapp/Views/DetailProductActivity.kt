@@ -5,15 +5,12 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
 import kotlinx.android.synthetic.main.activity_detail_product.*
 import kotlinx.android.synthetic.main.content_detail_product.*
-import kotlinx.android.synthetic.main.productosrow.view.*
-import net.azarquiel.fukkuapp.Model.Imagen
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
@@ -60,7 +57,7 @@ class DetailProductActivity : AppCompatActivity() {
     }
 
     private fun showProduct(){
-        foundImage()
+        mostrarImagen()
         tvNombreDetail.text = producto.nombre
         tvPrecioDetail.text = producto.precio
         tvDescripcionDetail.text = producto.descripcion
@@ -69,33 +66,16 @@ class DetailProductActivity : AppCompatActivity() {
         tvCategoriaDetail.text = producto.nombreCategoria
     }
 
-    private fun foundImage(){
-        var db= FirebaseFirestore.getInstance()
-        var imagen: Imagen?=null
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).collection(SUBCOLECCION_IMAGENES).limit(1)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    for(document in task.result!!) {
-                        imagen= Imagen("${document.data.getValue(CAMPO_ID)}","${document.data.getValue(CAMPO_IMAGEN)}","${document.data.getValue(
-                            CAMPO_PRODUCTOID
-                        )}")
-                    }
-                    mostrarImagen(imagen)
-                }
-            }
-    }
-
-    private fun mostrarImagen(imagen:Imagen?){
-        imagen?.let {
+    private fun mostrarImagen(){
+        if(producto.imagen != ""){
             var storageRef = FirebaseStorage.getInstance().reference
 
-            storageRef.child(imagen.imagen).downloadUrl.addOnSuccessListener {
+            storageRef.child(producto.imagen).downloadUrl.addOnSuccessListener {
                 Picasso.with(this).load(it).into(ivProductDetail)
             }.addOnFailureListener {
                 // Handle any errors
             }
-        }?: run {
+        }else{
             ivProductDetail.setImageResource(R.drawable.notfound)
         }
     }
