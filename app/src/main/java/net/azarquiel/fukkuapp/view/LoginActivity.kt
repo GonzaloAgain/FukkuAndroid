@@ -11,8 +11,9 @@ import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_login.*
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.service.MyFirebaseInstanceIdService
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
+@Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity() {
 
     companion object {
@@ -31,14 +32,46 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         btnLogin.setOnClickListener{
-            var email = fieldEmail.text.toString()
-            var password = fieldPassword.text.toString()
+            val email = fieldEmail.text.toString()
+            val password = fieldPassword.text.toString()
             signIn(email,password)
         }
 
         btnCreateAccount.setOnClickListener{
             val intent = Intent(this, CreateUserActivity::class.java)
             startActivity(intent)
+        }
+
+        btnResetPass.setOnClickListener {
+            alert {
+                customView {
+                    title = "Resetear contraseña"
+                    verticalLayout {
+                        val etEmail = editText {
+                            hint = "Introduce tu email"
+                            padding = dip(20)
+                        }
+                        positiveButton("Enviar") {
+                            if (TextUtils.isEmpty(etEmail.text)){
+                                longToast("Debes introducir un email")
+                            } else {
+                                val emailAddress = etEmail.text.toString()
+
+                                auth.sendPasswordResetEmail(emailAddress)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Log.d(TAG, "Email sent.")
+                                        }
+                                    }
+
+                                longToast("Enviado email de cambio de contraseña")
+                            }
+                        }
+                        negativeButton("Cancelar") {
+                        }
+                    }
+                }
+            }.show()
         }
 
     }
@@ -55,14 +88,12 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
 
-//                    val user = auth.currentUser
+                    val registrationToken = FirebaseInstanceId.getInstance().token
+                    MyFirebaseInstanceIdService.addTokentoFireStore(registrationToken)
 
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
-
-                    val registrationToken = FirebaseInstanceId.getInstance().token
-                    MyFirebaseInstanceIdService.addTokentoFireStore(registrationToken)
 
                 } else {
                     // If sign in fails, display a message to the user.

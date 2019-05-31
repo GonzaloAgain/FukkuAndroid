@@ -1,5 +1,6 @@
 package net.azarquiel.fukkuapp.view
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -42,6 +43,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startActivity(intent)
         }
 
+        btnLogOut.setOnClickListener {
+
+        }
+
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
@@ -58,11 +63,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun pintar() {
         val user = FirebaseAuth.getInstance().currentUser
 
-        tvUID.text = "UID: ${FirebaseAuth.getInstance().uid}"
-        tvUserUID.text = "User UID: ${user!!.uid}"
+        tvUserName.text = "User: ${user!!.displayName}"
+        tvUserUID.text = "UID: ${user.uid}"
     }
 
     override fun onBackPressed() {

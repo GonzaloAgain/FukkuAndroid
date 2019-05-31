@@ -34,7 +34,7 @@ class ChatActivity : AppCompatActivity() {
         rvMessages.layoutManager = LinearLayoutManager(this)
         rvMessages.adapter = adapter
 
-        db.collection("Canales/${channelID}/Mensajes")
+        db.collection("Canales/$channelID/Mensajes")
             .orderBy("time")
             .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
                 if (e != null) {
