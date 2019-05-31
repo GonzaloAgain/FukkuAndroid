@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.azarquiel.fukkuapp">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_fukku_logo"
@@ -44,10 +52,36 @@
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".view.MainActivity"
+                android:name=".Views.MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
-        </activity> <!-- FCM -->
+        </activity>
+        <activity
+                android:name=".Views.DetailProductActivity"
+                android:label="@string/title_activity_detail_product"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+                android:name=".Views.Productos_de_un_categoria"
+                android:label="@string/title_activity_productos_de_un_categoria"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".Fragments.Fragment_categorias">
+        </activity>
+        <activity android:name=".Views.AddProductoActivity">
+        </activity>
+        <activity
+                android:name=".Views.CategoriaActivity"
+                android:label="@string/title_activity_categoria"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+                android:name=".Views.ProductosActivity"
+                android:label="@string/title_activity_productos"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <!-- FCM -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
                 android:resource="@drawable/ic_menu_share"/>
