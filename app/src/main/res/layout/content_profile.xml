@@ -8,5 +8,107 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_profile"
         tools:context=".ProfileActivity">
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:padding="10dp">
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" android:gravity="center_vertical"
+                    android:layout_marginBottom="20dp">
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/tvProfileName" android:layout_weight="1"/>
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imageView3" android:layout_weight="1" app:srcCompat="@drawable/ic_fukku_logo"/>
+            </LinearLayout>
+            <TextView
+                    android:text="Información básica:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/textView9" android:textStyle="bold"
+                    android:textColor="@color/common_google_signin_btn_text_dark_focused"/>
+            <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_profile_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
 
+                <EditText
+                        android:id="@+id/itProfileName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_name" />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_profile_surnames"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                <EditText
+                        android:id="@+id/itProfileSurnames"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_surnames" />
+
+            </android.support.design.widget.TextInputLayout>
+            <TextView
+                    android:text="Información personal:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/textView10"
+                    android:textColor="@color/common_google_signin_btn_text_dark_focused" android:textStyle="bold"
+                    android:layout_marginTop="20dp"/>
+            <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_profile_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                <EditText
+                        android:id="@+id/itProfileGender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_gender" />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_profile_birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                <EditText
+                        android:id="@+id/itProfileBirthday"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_birthday" />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_profile_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                <EditText
+                        android:id="@+id/itProfileEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_email" />
+
+            </android.support.design.widget.TextInputLayout>
+            <Button
+                    android:text="Cambia tu contraseña"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/btnProfileChangePass"
+                    android:layout_marginTop="20dp"/>
+        </LinearLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

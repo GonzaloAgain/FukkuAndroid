@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.content_main.*
 import net.azarquiel.fukkuapp.AppConstants
+import net.azarquiel.fukkuapp.ProfileActivity
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.FirestoreUtil
 
@@ -45,6 +46,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         btnLogOut.setOnClickListener {
 
+        }
+
+        btnProfile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
         }
 
         fab.setOnClickListener { view ->
