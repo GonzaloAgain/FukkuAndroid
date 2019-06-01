@@ -12,6 +12,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_create_user.*
 import net.azarquiel.fukkuapp.R
+import net.azarquiel.fukkuapp.Views.MainActivity
 import net.azarquiel.fukkuapp.model.User
 import net.azarquiel.fukkuapp.service.MyFirebaseInstanceIdService
 import net.azarquiel.fukkuapp.util.FirestoreUtil

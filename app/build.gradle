@@ -39,13 +39,11 @@ dependencies {
     implementation "org.jetbrains.anko:anko-coroutines:$anko_version"
 
     //firebase
-    implementation 'com.google.firebase:firebase-core:16.0.1'
-    //utilizamos esta versión en concreto para que no haya problemas con firebase-messaging
+    implementation 'com.google.firebase:firebase-core:16.0.1' //utilizamos esta versión en concreto para que no haya problemas con firebase-messaging
     implementation 'com.google.firebase:firebase-firestore:19.0.0'
     implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
     implementation 'com.google.firebase:firebase-auth:17.0.0'
-    implementation 'com.google.firebase:firebase-messaging:17.3.4'
-    //utilizamos esta version ya que en versiones posteriores FirebaseInstanceIdService no está
+    implementation 'com.google.firebase:firebase-messaging:17.3.4' //utilizamos esta version ya que en versiones posteriores FirebaseInstanceIdService no está
 
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.google.firebase:firebase-storage:17.0.0'

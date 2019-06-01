@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
+import net.azarquiel.fukkuapp.Views.MainActivity
 
 class SplashActivity : AppCompatActivity() {
 
