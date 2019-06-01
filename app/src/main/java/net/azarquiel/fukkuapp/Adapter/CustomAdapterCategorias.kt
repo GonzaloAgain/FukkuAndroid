@@ -47,14 +47,8 @@ class CustomAdapterCategorias(val context: Context,
         }
 
         private fun mostrarIcono(icono_categoria: String,itemView:View){
-            if(icono_categoria.isNotEmpty()){
-                var storageRef = FirebaseStorage.getInstance().reference
-                storageRef.child(icono_categoria).downloadUrl.addOnSuccessListener {
-                    Picasso.with(context).load(it).into(itemView.ivIconoProducto)
-                }.addOnFailureListener {
-                    // Handle any errors
-                    Log.d("Jonay","Error iconos ${it.message}")
-                }
+            if(icono_categoria != ""){
+                Picasso.with(context).load(icono_categoria).into(itemView.ivIconoProducto)
             }else{
                 itemView.ivIconoProducto.setImageResource(R.drawable.notfound)
             }

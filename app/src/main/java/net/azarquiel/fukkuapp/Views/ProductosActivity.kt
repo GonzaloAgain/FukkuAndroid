@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,17 +17,17 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_productos.*
 import kotlinx.android.synthetic.main.content_productos.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.R
 import org.jetbrains.anko.toast
 
-class ProductosActivity : AppCompatActivity() {
+class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
 
     private lateinit var accion : String
     private lateinit var adapter : CustomAdapterProductos
     private lateinit var db: FirebaseFirestore
+    private lateinit var arrayProductos:ArrayList<Producto>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +52,27 @@ class ProductosActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_productos, menu)
+        // ************* <Filtro> ************
+        val searchItem = menu.findItem(R.id.search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setQueryHint("Search...")
+        searchView.setOnQueryTextListener(this)
+        // ************* </Filtro> ************
+        return true
+    }
+
+    override fun onQueryTextSubmit(p0: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        adapter.setProductos(arrayProductos.filter { p -> p.nombre.toLowerCase().contains(query!!.toLowerCase()) })
+        return false
+    }
+
     private fun crearAdapter(){
         adapter= CustomAdapterProductos(this,R.layout.productosrow)
         rvProductos.layoutManager= LinearLayoutManager(this)
@@ -57,6 +80,7 @@ class ProductosActivity : AppCompatActivity() {
     }
 
     private fun cargarProductos(coleccion:String,id:String,subcoleccion:String){
+        arrayProductos= ArrayList()
         db.collection(coleccion).document(id).collection(subcoleccion)
             .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
             .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
@@ -64,12 +88,10 @@ class ProductosActivity : AppCompatActivity() {
                     Log.w("TAG", "Listen failed.", e)
                     return@EventListener
                 }
-
-                val arrayProductos = ArrayList<Producto>()
+                arrayProductos.clear()
                 for (document in value!!) {
                     arrayProductos.add(document.toObject(Producto::class.java))
                 }
-
                 adapter.setProductos(arrayProductos)
             })
     }

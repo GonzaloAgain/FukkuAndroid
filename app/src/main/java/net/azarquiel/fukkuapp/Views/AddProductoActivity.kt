@@ -11,8 +11,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.widget.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -232,7 +232,14 @@ class AddProductoActivity : AppCompatActivity(){
         uploadTask.addOnFailureListener {
             toast("Fallo al subir la imagen")
         }.addOnSuccessListener {
-            imagenRuta = riversRef.path
+            sacarUrlImagen(riversRef.path)
+        }
+    }
+
+    private fun sacarUrlImagen(path: String) {
+        var storageRef = FirebaseStorage.getInstance().reference
+        storageRef.child(path).downloadUrl.addOnSuccessListener {
+            imagenRuta = it.toString()
             finaliza()
             addProduct()
         }

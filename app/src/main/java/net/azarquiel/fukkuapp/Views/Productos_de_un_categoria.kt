@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,8 +18,9 @@ import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 import org.jetbrains.anko.toast
+import android.support.v7.widget.SearchView
 
-class Productos_de_un_categoria : AppCompatActivity() {
+class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextListener{
 
     private lateinit var categoria: Categoria
     private lateinit var adapter : CustomAdapterProductos
@@ -46,7 +46,13 @@ class Productos_de_un_categoria : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_favoritos, menu)
+        menuInflater.inflate(R.menu.menu_productos_categoria, menu)
+        // ************* <Filtro> ************
+        val searchItem = menu.findItem(R.id.search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setQueryHint("Search...")
+        searchView.setOnQueryTextListener(this)
+        // ************* </Filtro> ************
         checkFavorite(menu)
         return true
     }
@@ -60,6 +66,15 @@ class Productos_de_un_categoria : AppCompatActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    override fun onQueryTextSubmit(p0: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        adapter.setProductos(arrayProductos.filter { p -> p.nombre.toLowerCase().contains(query!!.toLowerCase()) })
+        return false
     }
 
     private fun addDeleteFavoritos(item: MenuItem) : Boolean{

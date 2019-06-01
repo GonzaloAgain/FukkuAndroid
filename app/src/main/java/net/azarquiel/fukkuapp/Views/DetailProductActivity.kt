@@ -68,13 +68,7 @@ class DetailProductActivity : AppCompatActivity() {
 
     private fun mostrarImagen(){
         if(producto.imagen != ""){
-            var storageRef = FirebaseStorage.getInstance().reference
-
-            storageRef.child(producto.imagen).downloadUrl.addOnSuccessListener {
-                Picasso.with(this).load(it).into(ivProductDetail)
-            }.addOnFailureListener {
-                // Handle any errors
-            }
+            Picasso.with(this).load(producto.imagen).into(ivProductDetail)
         }else{
             ivProductDetail.setImageResource(R.drawable.notfound)
         }

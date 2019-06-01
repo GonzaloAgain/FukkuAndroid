@@ -49,10 +49,7 @@ class CustomAdapterProductos(val context: Context,
 
         private fun mostrarImagen(itemView:View,imagen:String){
             if(imagen != ""){
-                var storageRef = FirebaseStorage.getInstance().reference
-                storageRef.child(imagen).downloadUrl.addOnSuccessListener {
-                    Picasso.with(context).load(it).into(itemView.ivImagenProducto)
-                }
+                Picasso.with(context).load(imagen).into(itemView.ivImagenProducto)
             }else{
                 itemView.ivImagenProducto.setImageResource(R.drawable.notfound)
             }
