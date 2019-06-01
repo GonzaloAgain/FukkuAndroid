@@ -19,6 +19,8 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.robertlevonyan.components.picker.ItemModel
+import com.robertlevonyan.components.picker.PickerDialog
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.content_profile.*
 import net.azarquiel.fukkuapp.model.User
@@ -28,6 +30,7 @@ import java.util.*
 
 class ProfileActivity : AppCompatActivity() {
 
+    private lateinit var pickerDialog: PickerDialog
     private lateinit var user: FirebaseUser
     private lateinit var docRef: DocumentReference
     private lateinit var db: FirebaseFirestore
@@ -168,8 +171,31 @@ class ProfileActivity : AppCompatActivity() {
             ivProfile.setOnClickListener(null)
         } else {
             btnProfileChangePass.visibility = VISIBLE
-            ivProfile.setOnClickListener { toast("Hello") }
+            ivProfile.setOnClickListener { picker() }
         }
+    }
+
+    private fun picker() {
+        val itemModelc = ItemModel(ItemModel.ITEM_CAMERA)
+        val itemModelg = ItemModel(ItemModel.ITEM_GALLERY)
+        pickerDialog = PickerDialog.Builder(this)
+            .setListType(PickerDialog.TYPE_GRID)
+            .setItems(arrayListOf(itemModelg, itemModelc))
+            .setDialogStyle(PickerDialog.DIALOG_MATERIAL)
+            .create()
+
+        pickerDialog.setPickerCloseListener { type, uri ->
+            when (type) {
+                ItemModel.ITEM_CAMERA -> {
+                    ivProfile.setImageURI(uri)
+                }
+                ItemModel.ITEM_GALLERY -> {
+                    ivProfile.setImageURI(uri)
+                }
+            }
+        }
+
+        pickerDialog.show(supportFragmentManager, "")
     }
 
     private fun getUser() {
