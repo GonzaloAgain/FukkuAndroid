@@ -93,7 +93,7 @@ class AddProductoActivity : AppCompatActivity(){
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         arrayStringCategorias.add("${document.data.getValue(CAMPO_NOMBRE)}")
-                        arrayCategorias.add(Categoria(document.id,"${document.data.getValue(CAMPO_NOMBRE)}",""))
+                        arrayCategorias.add(document.toObject(Categoria::class.java))
                     }
                     cargarSpinner()
                 }
@@ -144,11 +144,9 @@ class AddProductoActivity : AppCompatActivity(){
     }
 
     private fun addProduct(){
-        inicia("Uploading product")
+        inicia()
         val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm")
-        var producto: Producto? = null
-        imagenRuta?.let {
-            producto = Producto(
+        var producto = Producto(
                 "${etNombreProducto.text} ${formatter.format(Date())}",
                 "${etNombreProducto.text}",
                 "nombre Usuario",
@@ -160,28 +158,11 @@ class AddProductoActivity : AppCompatActivity(){
                 arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,
                 arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,
                 "KGqBjsuqe0747tCzBeyu",
-                it
+                if(imagenRuta == null) "" else imagenRuta!!
             )
-        } ?: run {
-            producto = Producto(
-                "${etNombreProducto.text} ${formatter.format(Date())}",
-                "${etNombreProducto.text}",
-                "nombre Usuario",
-                "${etDescripcionProducto.text}",
-                "${etPrecioProducto.text}",
-                formatter.format(Date()),
-                "${latitude}",
-                "${longitude}",
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,
-                "KGqBjsuqe0747tCzBeyu",
-                ""
-            )
-        }
-        addProductoColeccionProductos(producto!!)
-        addProductoColeccionUsuarios(producto!!)
-        addProductoColeccionCategorias(producto!!)
-        //veces = 1
+        addProductoColeccionProductos(producto)
+        addProductoColeccionUsuarios(producto)
+        addProductoColeccionCategorias(producto)
         finish()
         finaliza()
     }
@@ -224,7 +205,7 @@ class AddProductoActivity : AppCompatActivity(){
     }
 
     private fun subirImagen(){
-        inicia("Uploading image")
+        inicia()
         var storageRef = FirebaseStorage.getInstance().reference
         riversRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
         var uploadTask = riversRef.putFile(uriImagen!!)
@@ -245,8 +226,8 @@ class AddProductoActivity : AppCompatActivity(){
         }
     }
 
-    private fun inicia(texto:String){
-        p=indeterminateProgressDialog(texto)
+    private fun inicia(){
+        p=indeterminateProgressDialog("Uploading product")
         p.show()
     }
 

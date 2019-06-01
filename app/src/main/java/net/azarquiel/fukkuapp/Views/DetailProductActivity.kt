@@ -5,21 +5,29 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
-
+import com.robertlevonyan.components.picker.set
 import kotlinx.android.synthetic.main.activity_detail_product.*
 import kotlinx.android.synthetic.main.content_detail_product.*
+import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
+import org.jetbrains.anko.toast
 
 class DetailProductActivity : AppCompatActivity() {
 
     private lateinit var producto : Producto
     private lateinit var db : FirebaseFirestore
     private var isFavorito : Boolean=false
+    private lateinit var arrayNombresCategorias:ArrayList<String>
+    private lateinit var arrayCategorias:ArrayList<Categoria>
+    private var categoriaElegida:String?=null
+    private var editable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,30 +56,80 @@ class DetailProductActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.action_update_product -> return true
+            R.id.action_update_product -> editable()
             R.id.action_delete_product -> deleteProducto()
-            R.id.action_favorito_product -> addDeleteFavoritos()
+            R.id.action_favorito_product -> addDeleteFavoritos(item)
             else -> return super.onOptionsItemSelected(item)
         }
         return true
     }
 
     private fun showProduct(){
+        activarEditText(false)
         mostrarImagen()
-        tvNombreDetail.text = producto.nombre
-        tvPrecioDetail.text = producto.precio
-        tvDescripcionDetail.text = producto.descripcion
-        tvFechaDetail.text = producto.fecha
-        tvUsuarioDetail.text = producto.nombreUsuario
-        tvCategoriaDetail.text = producto.nombreCategoria
+        tvNombreDetail.set(producto.nombre)
+        tvPrecioDetail.set(producto.precio)
+        tvDescripcionDetail.set(producto.descripcion)
+        tvFechaDetail.set(producto.fecha)
+        tvUsuarioDetail.set(producto.nombreUsuario)
+        cargarCategorias()
+    }
+
+    private fun cargarCategorias(){
+        arrayNombresCategorias= java.util.ArrayList()
+        arrayCategorias= java.util.ArrayList()
+        db.collection(COLECCION_CATEGORIA)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    for (document in task.result!!) {
+                        arrayNombresCategorias.add("${document.data.getValue(CAMPO_NOMBRE)}")
+                        arrayCategorias.add(document.toObject(Categoria::class.java))
+                    }
+                    cargarSpinner()
+                    categoriaProducto()
+                }
+            }
+    }
+
+    private fun categoriaProducto(){
+        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    var document = task.result
+                    if(document!!.exists()){
+                        var categoria = document.toObject(Categoria::class.java)
+                        spCategoriaDetail.setSelection(arrayNombresCategorias.indexOf(categoria!!.nombre))
+                    }else{
+                        toast("Es posible que el producto haya sido borrado")
+                    }
+                }
+            }
+    }
+
+    private fun cargarSpinner(){
+        spCategoriaDetail.adapter= ArrayAdapter(this, android.R.layout.simple_spinner_item, arrayNombresCategorias)
+        spCategoriaDetail.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                categoriaElegida=arrayNombresCategorias.get(position)
+            }
+        }
+
     }
 
     private fun mostrarImagen(){
         if(producto.imagen != ""){
-            Picasso.with(this).load(producto.imagen).into(ivProductDetail)
+            Glide.with(this).load(producto.imagen).into(ivProductDetail)
         }else{
             ivProductDetail.setImageResource(R.drawable.notfound)
         }
+    }
+
+    private fun pulsadoUpdate(){
+
     }
 
     private fun deleteProducto(){
@@ -93,13 +151,13 @@ class DetailProductActivity : AppCompatActivity() {
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
     }
 
-    private fun addDeleteFavoritos() : Boolean{
+    private fun addDeleteFavoritos(item: MenuItem): Boolean{
         if(!isFavorito){
             addToProductosFavoritos()
-            //Todo
+            item.title = resources.getString(R.string.deleteFavortios)
         }else{
             deleteToProductosFavoritos()
-            //Todo
+            item.title = resources.getString(R.string.addFavortios)
         }
         isFavorito = !isFavorito
         return true
@@ -140,6 +198,29 @@ class DetailProductActivity : AppCompatActivity() {
             menu.findItem(R.id.action_delete_product).isVisible = false
             menu.findItem(R.id.action_update_product).isVisible = false
             checkFavorite(menu)
+        }
+    }
+
+    private fun editable(){
+        if(!editable){
+            //enable edit text
+            activarEditText(true)
+        }else{
+            activarEditText(false)
+            //disable edit text and update product
+        }
+        editable =!editable
+    }
+
+    private fun activarEditText(accion:Boolean){
+        tvNombreDetail.isEnabled = accion
+        tvPrecioDetail.isEnabled = accion
+        tvDescripcionDetail.isEnabled = accion
+        spCategoriaDetail.isEnabled = accion
+        ivProductDetail.setOnClickListener {
+            if (accion){
+                toast("Hola")
+            }
         }
     }
 }

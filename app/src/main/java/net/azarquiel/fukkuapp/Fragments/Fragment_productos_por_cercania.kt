@@ -47,6 +47,10 @@ class Fragment_productos_por_cercania : Fragment(){
         locationManager = activity!!.applicationContext.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager?
         crearAdapter()
         ubicacion()
+        refreshProductosCercanos.setOnRefreshListener {
+            ubicacion()
+            refreshProductosCercanos.isRefreshing=false
+        }
     }
 
     private fun crearAdapter() {
@@ -100,6 +104,7 @@ class Fragment_productos_por_cercania : Fragment(){
         db.collection(COLECCION_PRODUCTOS).orderBy(CAMPO_FECHA, Query.Direction.DESCENDING).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    arrayProductosCercanos.clear()
                     for (document in task.result!!) {
                         if(checkDistance("${document.data.getValue(CAMPO_LATITUD)}", "${document.data.getValue(
                                 CAMPO_LONGITUD)}")){

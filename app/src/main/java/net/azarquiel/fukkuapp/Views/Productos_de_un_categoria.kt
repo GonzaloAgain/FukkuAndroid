@@ -42,6 +42,10 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
         title = categoria.nombre
         crearAdapter()
         cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
+        refreshProductosCategoria.setOnRefreshListener {
+            cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
+            refreshProductosCategoria.isRefreshing=false
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -38,6 +38,10 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         db=FirebaseFirestore.getInstance()
         crearAdapter()
         cargarCategoriasInteres("KGqBjsuqe0747tCzBeyu")
+        refreshProductosCategoriasInteres.setOnRefreshListener {
+            cargarCategoriasInteres("KGqBjsuqe0747tCzBeyu")
+            refreshProductosCategoriasInteres.isRefreshing=false
+        }
     }
 
     private fun crearAdapter() {
@@ -52,6 +56,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    arrayCategoriasInteres.clear()
                     for (document in task.result!!) {
                         arrayCategoriasInteres.add(document.toObject(Categoria::class.java))
                     }
@@ -61,6 +66,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
     }
 
     private fun cargarProductos(){
+        arrayProductos.clear()
         for(categoria in arrayCategoriasInteres){
             db.collection(COLECCION_CATEGORIA).document(categoria.id).collection(SUBCOLECCION_PRODUCTOS)
                 .get()
