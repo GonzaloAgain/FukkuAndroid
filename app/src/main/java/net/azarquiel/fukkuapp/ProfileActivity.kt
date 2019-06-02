@@ -2,6 +2,7 @@ package net.azarquiel.fukkuapp
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -13,12 +14,14 @@ import android.view.MenuItem
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.WindowManager
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.robertlevonyan.components.picker.ItemModel
 import com.robertlevonyan.components.picker.PickerDialog
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -187,15 +190,34 @@ class ProfileActivity : AppCompatActivity() {
         pickerDialog.setPickerCloseListener { type, uri ->
             when (type) {
                 ItemModel.ITEM_CAMERA -> {
-                    ivProfile.setImageURI(uri)
+                    uploadImage(uri)
                 }
                 ItemModel.ITEM_GALLERY -> {
-                    ivProfile.setImageURI(uri)
+                    uploadImage(uri)
                 }
             }
         }
 
         pickerDialog.show(supportFragmentManager, "")
+    }
+
+    private fun uploadImage(uriImage: Uri) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val riversRef = storageRef.child("profile_photos/${FirebaseAuth.getInstance().currentUser!!.uid}").child(uriImage.lastPathSegment!!)
+        val uploadTask = riversRef.putFile(uriImage)
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener {
+            toast("Fallo al subir la imagen")
+        }.addOnSuccessListener {
+            getUrlImage(riversRef.path)
+        }
+    }
+
+    private fun getUrlImage(path: String) {
+        var storageRef = FirebaseStorage.getInstance().reference
+        storageRef.child(path).downloadUrl.addOnSuccessListener {
+            docRef.update("profilePhoto", it.toString())
+        }
     }
 
     private fun getUser() {
@@ -238,13 +260,19 @@ class ProfileActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun pintar() {
 
-        tvProfileName.text = userFirestore.name + " ." + userFirestore.surnames.substring(0,1)
+        tvProfileName.text = userFirestore.name + " " + userFirestore.surnames.substring(0,1) + "."
 
         itProfileName.setText(userFirestore.name)
         itProfileSurnames.setText(userFirestore.surnames)
         itProfileGender.setText(userFirestore.gender)
         itProfileBirthday.setText(userFirestore.birthday)
         itProfileEmail.setText(userFirestore.email)
+
+        if(userFirestore.profilePhoto != ""){
+            Glide.with(this).load(userFirestore.profilePhoto).into(ivProfile)
+        }else{
+            ivProfile.setImageResource(R.drawable.ic_fukku_logo)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

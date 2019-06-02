@@ -1,40 +1,53 @@
 package net.azarquiel.fukkuapp.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.content_profile.*
 import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.Message
+import net.azarquiel.fukkuapp.model.ProductoPruebas
+import net.azarquiel.fukkuapp.model.User
 import net.azarquiel.fukkuapp.util.FirestoreUtil
 import net.azarquiel.fukkuapp.viewmodel.MessagesAdapter
-import org.jetbrains.anko.toast
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
+    private lateinit var product: ProductoPruebas
+    private lateinit var productID: String
+    private lateinit var database: FirebaseFirestore
     private lateinit var adapter: MessagesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        val db = FirebaseFirestore.getInstance()
+
+
+        database = FirebaseFirestore.getInstance()
         val channelID = intent.getStringExtra(AppConstants.CHANNEL_ID)
         val otherUserID = intent.getStringExtra(AppConstants.OTHER_USER_ID)
+        productID = intent.getStringExtra(AppConstants.PRODUCT_ID)
+
+        getProduct()
 
         adapter = MessagesAdapter(this, R.layout.row_message)
         rvMessages.layoutManager = LinearLayoutManager(this)
         rvMessages.adapter = adapter
 
-        db.collection("Canales/$channelID/Mensajes")
+        database.collection("Canales/$channelID/Mensajes")
             .orderBy("time")
             .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
                 if (e != null) {
@@ -60,12 +73,43 @@ class ChatActivity : AppCompatActivity() {
                 FirebaseAuth.getInstance().currentUser!!.uid,
                 otherUserID,
                 FirebaseAuth.getInstance().currentUser!!.displayName!!,
-                channelID)
+                channelID,
+                productID)
             etMessage.text.clear()
 
             FirestoreUtil.sendMessage(mensaje,channelID)
         }
 
+    }
+
+    private fun getProduct() {
+        val docRef = database.document("Productos/$productID")
+        docRef.addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
+            if (e != null) {
+                Log.w("PROFILE", "Listen failed.", e)
+                return@EventListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                Log.d("PROFILE", "Current data: ${snapshot.data}")
+                product = snapshot.toObject(ProductoPruebas::class.java)!!
+                showProduct()
+
+            } else {
+                Log.d("PROFILE", "Current data: null")
+            }
+        })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showProduct() {
+        tvChatProduct.text = product.nombre + " - " + product.nombreUsuario
+
+        if(product.imagen != ""){
+            Glide.with(this).load(product.imagen).into(ivChatProduct)
+        }else{
+            ivProfile.setImageResource(R.drawable.ic_fukku_logo)
+        }
     }
 
 }

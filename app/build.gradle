@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:17.0.0'
     //utilizamos esta version ya que en versiones posteriores FirebaseInstanceIdService no está
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
 
     // CircleImageView
     implementation 'de.hdodenhof:circleimageview:3.0.0'

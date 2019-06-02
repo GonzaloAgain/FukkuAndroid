@@ -18,6 +18,9 @@ import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.ProfileActivity
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.FirestoreUtil
+import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,28 +32,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         pintar()
 
         btnCreateChannel.setOnClickListener {
-            //meterlo en el utils
-            //FirestoreUtil.getOrCreateChatChannel("uDi9Nbm2Pjb1zUi5f7SAOSu57wY2","Hola  2019-05-23 22:34"){ channelID ->
-            FirestoreUtil.getOrCreateChatChannel("6k1OoITcwOO1QTvzoDBz36hoBAK2","pp  2019-05-23 22:34"){ channelID ->
+            val otherUserID = "6k1OoITcwOO1QTvzoDBz36hoBAK2"
+            val productID = "Producto 1 02-06-2019 02:44"
+            FirestoreUtil.getOrCreateChatChannel(otherUserID, productID){ channelID ->
                 //toast("Haber que me saca: ${channelID}")
                 val intent = Intent(this, ChatActivity::class.java)
                 intent.putExtra(AppConstants.CHANNEL_ID, channelID)
+                intent.putExtra(AppConstants.OTHER_USER_ID, otherUserID)
+                intent.putExtra(AppConstants.PRODUCT_ID, productID)
                 startActivity(intent)
             }
         }
 
         btnAllChats.setOnClickListener {
-            val intent = Intent(this, OpenChatsActivity::class.java)
-            startActivity(intent)
+            startActivity(intentFor<OpenChatsActivity>())
         }
 
         btnLogOut.setOnClickListener {
-
+            FirebaseAuth.getInstance().signOut()
+            startActivity(intentFor<LoginActivity>().newTask().clearTask())
         }
 
         btnProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+            startActivity(intentFor<ProfileActivity>())
         }
 
         fab.setOnClickListener { view ->

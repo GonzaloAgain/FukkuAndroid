@@ -64,6 +64,7 @@ class OpenChatsActivity : AppCompatActivity() {
                 val intent = Intent(this, ChatActivity::class.java)
                 intent.putExtra(AppConstants.CHANNEL_ID, channelID)
                 intent.putExtra(AppConstants.OTHER_USER_ID,otherUserID)
+                intent.putExtra(AppConstants.PRODUCT_ID,channel.productID)
                 startActivity(intent)
             }
         }
