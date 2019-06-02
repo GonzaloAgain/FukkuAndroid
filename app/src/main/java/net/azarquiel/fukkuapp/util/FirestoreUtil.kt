@@ -3,6 +3,8 @@ package net.azarquiel.fukkuapp.util
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import net.azarquiel.fukkuapp.model.*
 import net.azarquiel.fukkuapp.view.CreateUserActivity

@@ -71,7 +71,7 @@ class CreateUserActivity : AppCompatActivity() {
 
     private fun createUserFirestore() {
         user = auth.currentUser!!
-        val userFirestore = User(name, surnames, email, user.uid, mutableListOf())
+        val userFirestore = User(name, surnames, email, user.uid, mutableListOf(),"","","")
         FirestoreUtil.createUserFirestore(userFirestore)
 
         val registrationToken = FirebaseInstanceId.getInstance().token

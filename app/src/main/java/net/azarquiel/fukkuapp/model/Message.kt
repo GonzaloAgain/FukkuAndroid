@@ -7,4 +7,5 @@ data class Message (val text: String = "",
                     val senderID: String = "",
                     val recipientID: String = "",
                     val senderName: String = "",
-                    val channelID: String = "")
+                    val channelID: String = "",
+                    val productID: String = "")
