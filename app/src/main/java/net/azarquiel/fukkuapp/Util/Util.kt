@@ -3,14 +3,13 @@ package net.azarquiel.fukkuapp.Util
 import android.Manifest
 import android.app.ProgressDialog
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import com.robertlevonyan.components.picker.ItemModel
-import com.robertlevonyan.components.picker.PickerDialog
-import kotlinx.android.synthetic.main.activity_add_producto.*
+import net.azarquiel.fukkuapp.Model.Categoria
 import org.jetbrains.anko.indeterminateProgressDialog
+import java.text.SimpleDateFormat
+import java.util.*
 
 object Util {
 
@@ -35,5 +34,18 @@ object Util {
                 ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),1)
             }
         }
+    }
+
+    fun sacarCategoriaConNombre(nombreCategoria:String, arrayCategorias:ArrayList<Categoria>, arrayNombres:ArrayList<String>): Categoria{
+        var categoria = Categoria()
+        categoria.nombre =  arrayCategorias.get(arrayNombres.indexOf(nombreCategoria)).nombre
+        categoria.id = arrayCategorias.get(arrayNombres.indexOf(nombreCategoria)).id
+        categoria.icono = arrayCategorias.get(arrayNombres.indexOf(nombreCategoria)).icono
+        return categoria
+    }
+
+    fun formatearFecha(formato:String, fecha:Date):String{
+        val formatter = SimpleDateFormat(formato)
+        return formatter.format(fecha)
     }
 }

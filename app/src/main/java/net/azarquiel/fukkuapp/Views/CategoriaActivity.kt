@@ -29,13 +29,12 @@ class CategoriaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categoria)
         setSupportActionBar(toolbar)
+        inicializate()
+    }
+
+    private fun inicializate(){
         db = FirebaseFirestore.getInstance()
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
+        title = resources.getString(R.string.categoriasFavNav)
         crearAdapter()
         cargarCategoriasDeInteres()
     }

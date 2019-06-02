@@ -1,7 +1,6 @@
 package net.azarquiel.fukkuapp.Views
 
 import android.Manifest
-import android.app.ProgressDialog
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -11,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.View
 import android.widget.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,7 +24,6 @@ import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 import org.jetbrains.anko.toast
 import java.util.*
-import java.text.SimpleDateFormat
 
 @Suppress("DEPRECATION")
 class AddProductoActivity : AppCompatActivity(){
@@ -36,10 +33,10 @@ class AddProductoActivity : AppCompatActivity(){
     private lateinit var arrayCategorias:ArrayList<Categoria>
     private var categoriaElegida:String?=null
     private lateinit var pickerDialog: PickerDialog
-    private lateinit var riversRef: StorageReference
+    private lateinit var imageRef: StorageReference
+    private lateinit var storageRef: StorageReference
     private var imagenRuta: String?=null
     private var locationManager : LocationManager? = null
-    private lateinit var p: ProgressDialog
     private var uriImagen: Uri?=null
     private var latitude: Double?=null
     private var longitude: Double?=null
@@ -47,8 +44,12 @@ class AddProductoActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_producto)
+        inicializate()
+    }
 
+    private fun inicializate(){
         db = FirebaseFirestore.getInstance()
+        storageRef = FirebaseStorage.getInstance().reference
 
         // Create persistent LocationManager reference
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
@@ -144,18 +145,18 @@ class AddProductoActivity : AppCompatActivity(){
 
     private fun addProduct(){
         Util.inicia(this)
-        val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm")
+        var categoria = Util.sacarCategoriaConNombre(categoriaElegida!!,arrayCategorias,arrayStringCategorias)
         var producto = Producto(
-                "${etNombreProducto.text} ${formatter.format(Date())}",
+                "${etNombreProducto.text} ${Util.formatearFecha("dd-MM-yyyy HH:mm",Date())}",
                 "${etNombreProducto.text}",
                 "nombre Usuario",
                 "${etDescripcionProducto.text}",
                 "${etPrecioProducto.text}",
-                formatter.format(Date()),
+                Util.formatearFecha("dd-MM-yyyy HH:mm",Date()),
                 "${latitude}",
                 "${longitude}",
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,
+                categoria.id,
+                categoria.nombre,
                 "KGqBjsuqe0747tCzBeyu",
                 if(imagenRuta == null) "" else imagenRuta!!
             )
@@ -205,19 +206,17 @@ class AddProductoActivity : AppCompatActivity(){
 
     private fun subirImagen(){
         Util.inicia(this)
-        var storageRef = FirebaseStorage.getInstance().reference
-        riversRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
-        var uploadTask = riversRef.putFile(uriImagen!!)
+        imageRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
+        var uploadTask = imageRef.putFile(uriImagen!!)
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener {
             toast("Fallo al subir la imagen")
         }.addOnSuccessListener {
-            sacarUrlImagen(riversRef.path)
+            sacarUrlImagen(imageRef.path)
         }
     }
 
     private fun sacarUrlImagen(path: String) {
-        var storageRef = FirebaseStorage.getInstance().reference
         storageRef.child(path).downloadUrl.addOnSuccessListener {
             imagenRuta = it.toString()
             Util.finaliza()

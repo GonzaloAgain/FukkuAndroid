@@ -32,11 +32,6 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_productos_de_un_categoria)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
         inicializate()
     }
 

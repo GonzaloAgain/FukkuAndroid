@@ -41,8 +41,13 @@ class DetailProductActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+        inicializate()
+    }
+
+    private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         producto=intent.getSerializableExtra("producto") as Producto
+        title = producto.nombre
         showProduct()
     }
 
