@@ -1,22 +1,24 @@
 package net.azarquiel.fukkuapp.Views
 
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.robertlevonyan.components.picker.ItemModel
+import com.robertlevonyan.components.picker.PickerDialog
 import com.robertlevonyan.components.picker.set
 import kotlinx.android.synthetic.main.activity_detail_product.*
 import kotlinx.android.synthetic.main.content_detail_product.*
-import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.Util.Util
 import org.jetbrains.anko.toast
 
 class DetailProductActivity : AppCompatActivity() {
@@ -24,10 +26,11 @@ class DetailProductActivity : AppCompatActivity() {
     private lateinit var producto : Producto
     private lateinit var db : FirebaseFirestore
     private var isFavorito : Boolean=false
-    private lateinit var arrayNombresCategorias:ArrayList<String>
-    private lateinit var arrayCategorias:ArrayList<Categoria>
-    private var categoriaElegida:String?=null
     private var editable = false
+    private lateinit var pickerDialog: PickerDialog
+    private var uriImagen: Uri?=null
+    private lateinit var riversRef: StorageReference
+    private var imagenRuta: String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,54 +73,9 @@ class DetailProductActivity : AppCompatActivity() {
         tvNombreDetail.set(producto.nombre)
         tvPrecioDetail.set(producto.precio)
         tvDescripcionDetail.set(producto.descripcion)
-        tvFechaDetail.set(producto.fecha)
-        tvUsuarioDetail.set(producto.nombreUsuario)
-        cargarCategorias()
-    }
-
-    private fun cargarCategorias(){
-        arrayNombresCategorias= java.util.ArrayList()
-        arrayCategorias= java.util.ArrayList()
-        db.collection(COLECCION_CATEGORIA)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    for (document in task.result!!) {
-                        arrayNombresCategorias.add("${document.data.getValue(CAMPO_NOMBRE)}")
-                        arrayCategorias.add(document.toObject(Categoria::class.java))
-                    }
-                    cargarSpinner()
-                    categoriaProducto()
-                }
-            }
-    }
-
-    private fun categoriaProducto(){
-        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    var document = task.result
-                    if(document!!.exists()){
-                        var categoria = document.toObject(Categoria::class.java)
-                        spCategoriaDetail.setSelection(arrayNombresCategorias.indexOf(categoria!!.nombre))
-                    }else{
-                        toast("Es posible que el producto haya sido borrado")
-                    }
-                }
-            }
-    }
-
-    private fun cargarSpinner(){
-        spCategoriaDetail.adapter= ArrayAdapter(this, android.R.layout.simple_spinner_item, arrayNombresCategorias)
-        spCategoriaDetail.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                categoriaElegida=arrayNombresCategorias.get(position)
-            }
-        }
-
+        tvFechaDetail.text = producto.fecha
+        tvUsuarioDetail.text = producto.nombreUsuario
+        tvCategoriaDetail.text = producto.nombreCategoria
     }
 
     private fun mostrarImagen(){
@@ -126,10 +84,6 @@ class DetailProductActivity : AppCompatActivity() {
         }else{
             ivProductDetail.setImageResource(R.drawable.notfound)
         }
-    }
-
-    private fun pulsadoUpdate(){
-
     }
 
     private fun deleteProducto(){
@@ -207,7 +161,7 @@ class DetailProductActivity : AppCompatActivity() {
             activarEditText(true)
         }else{
             activarEditText(false)
-            //disable edit text and update product
+            checkUpdate()
         }
         editable =!editable
     }
@@ -216,11 +170,76 @@ class DetailProductActivity : AppCompatActivity() {
         tvNombreDetail.isEnabled = accion
         tvPrecioDetail.isEnabled = accion
         tvDescripcionDetail.isEnabled = accion
-        spCategoriaDetail.isEnabled = accion
         ivProductDetail.setOnClickListener {
             if (accion){
-                toast("Hola")
+                picker()
             }
+        }
+    }
+
+    private fun checkUpdate(){
+        if(uriImagen !=null){
+            subirImagen()
+        }else{
+            updateProduct()
+        }
+    }
+
+    private fun updateProduct(){
+        producto.nombre = "${tvNombreDetail.text}"
+        producto.descripcion = "${tvDescripcionDetail.text}"
+        producto.precio = "${tvPrecioDetail.text}"
+        if(imagenRuta !=null){
+            producto.imagen = imagenRuta!!
+        }
+        db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
+        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+    }
+
+    private fun picker(){
+        val itemModelc = ItemModel(ItemModel.ITEM_CAMERA)
+        val itemModelg = ItemModel(ItemModel.ITEM_GALLERY)
+        pickerDialog = PickerDialog.Builder(this)
+            .setListType(PickerDialog.TYPE_GRID)
+            .setItems(arrayListOf(itemModelg, itemModelc))
+            .setDialogStyle(PickerDialog.DIALOG_MATERIAL)
+            .create()
+
+        pickerDialog.setPickerCloseListener { type, uri ->
+            when (type) {
+                ItemModel.ITEM_CAMERA -> {
+                    uriImagen=uri
+                    ivProductDetail.setImageURI(uriImagen)
+                }
+                ItemModel.ITEM_GALLERY -> {
+                    uriImagen=uri
+                    ivProductDetail.setImageURI(uriImagen)
+                }
+            }
+        }
+        pickerDialog.show(supportFragmentManager, "")
+    }
+
+    private fun subirImagen(){
+        Util.inicia(this)
+        var storageRef = FirebaseStorage.getInstance().reference
+        riversRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
+        var uploadTask = riversRef.putFile(uriImagen!!)
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener {
+            toast("Fallo al subir la imagen")
+        }.addOnSuccessListener {
+            sacarUrlImagen(riversRef.path)
+        }
+    }
+
+    private fun sacarUrlImagen(path: String) {
+        var storageRef = FirebaseStorage.getInstance().reference
+        storageRef.child(path).downloadUrl.addOnSuccessListener {
+            imagenRuta = it.toString()
+            Util.finaliza()
+            updateProduct()
         }
     }
 }

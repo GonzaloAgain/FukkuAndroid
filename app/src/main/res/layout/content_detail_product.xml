@@ -78,11 +78,11 @@
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/textView18" android:layout_weight="0"/>
-                <Spinner
+                <TextView
                         android:text="TextView"
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/spCategoriaDetail"
+                        android:layout_height="wrap_content" android:id="@+id/tvCategoriaDetail"
                         android:layout_weight="1"/>
             </LinearLayout>
         </LinearLayout>

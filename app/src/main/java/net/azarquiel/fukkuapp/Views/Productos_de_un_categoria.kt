@@ -37,15 +37,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-        db = FirebaseFirestore.getInstance()
-        categoria=intent.getSerializableExtra("categoria") as Categoria
-        title = categoria.nombre
-        crearAdapter()
-        cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
-        refreshProductosCategoria.setOnRefreshListener {
-            cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
-            refreshProductosCategoria.isRefreshing=false
-        }
+        inicializate()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -81,12 +73,26 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
         return false
     }
 
+    private fun inicializate(){
+        db = FirebaseFirestore.getInstance()
+        categoria=intent.getSerializableExtra("categoria") as Categoria
+        title = categoria.nombre
+        crearAdapter()
+        cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
+        refreshProductosCategoria.setOnRefreshListener {
+            cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
+            refreshProductosCategoria.isRefreshing=false
+        }
+    }
+
     private fun addDeleteFavoritos(item: MenuItem) : Boolean{
         if(!isFavorito){
-            addToCategoriasFavoritas()
+            FireStoreUtil.addToCategoriasFavoritas(categoria)
+            //addToCategoriasFavoritas()
             item.title = resources.getString(R.string.deleteFavortios)
         }else{
-            deleteToCategoriasFavoritas()
+            FireStoreUtil.deleteToCategoriasFavoritas(categoria)
+            //deleteToCategoriasFavoritas()
             item.title = resources.getString(R.string.addFavortios)
         }
         isFavorito = !isFavorito
@@ -115,15 +121,15 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
             }
     }
 
-    private fun addToCategoriasFavoritas(){
+    /*private fun addToCategoriasFavoritas(){
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).set(categoria)
-    }
+    }*/
 
-    private fun deleteToCategoriasFavoritas(){
+    /*private fun deleteToCategoriasFavoritas(){
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).delete()
-    }
+    }*/
 
     private fun checkFavorite(menu: Menu) {
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)

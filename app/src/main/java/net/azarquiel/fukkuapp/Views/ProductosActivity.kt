@@ -33,23 +33,13 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_productos)
         setSupportActionBar(toolbar)
-        db = FirebaseFirestore.getInstance()
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
 
-        accion=intent.getSerializableExtra("accion") as String
-        crearAdapter()
-
-        if(accion == TUS_PRODUCTOS){
-            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
-            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS)
-        }else if(accion == TUS_PRODUCTOS_FAVORITOS){
-            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
-            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS_FAVORITOS)
-        }
+        inicializate()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -71,6 +61,20 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
     override fun onQueryTextChange(query: String?): Boolean {
         adapter.setProductos(arrayProductos.filter { p -> p.nombre.toLowerCase().contains(query!!.toLowerCase()) })
         return false
+    }
+
+    private fun inicializate(){
+        db = FirebaseFirestore.getInstance()
+        accion=intent.getSerializableExtra("accion") as String
+        crearAdapter()
+
+        if(accion == TUS_PRODUCTOS){
+            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
+            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS)
+        }else if(accion == TUS_PRODUCTOS_FAVORITOS){
+            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
+            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS_FAVORITOS)
+        }
     }
 
     private fun crearAdapter(){

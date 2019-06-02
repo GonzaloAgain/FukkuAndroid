@@ -59,18 +59,6 @@ class Fragment_productos_por_cercania : Fragment(){
         rvProductosCercanos.adapter=adapter
     }
 
-    private fun activatePermissionCheck(){
-        var permissionCheck= ContextCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
-
-        if(permissionCheck == PackageManager.PERMISSION_DENIED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)){
-
-            }else{
-                ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),1)
-            }
-        }
-    }
-
     private fun ubicacion(){
         try {
             // Request location updates
@@ -87,7 +75,6 @@ class Fragment_productos_por_cercania : Fragment(){
     //define the listener
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            Log.d("Jonay", "${location.longitude}.............${location.latitude}")
             getProductsNearby(location.latitude,location.longitude)
         }
         override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
@@ -112,7 +99,6 @@ class Fragment_productos_por_cercania : Fragment(){
                         }
                     }
                     adapter.setProductos(arrayProductosCercanos)
-                    Log.d("Jonay", arrayProductosCercanos.toString())
                 }
             }
     }

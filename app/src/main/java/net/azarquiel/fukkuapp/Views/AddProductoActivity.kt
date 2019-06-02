@@ -24,7 +24,6 @@ import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
-import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.toast
 import java.util.*
 import java.text.SimpleDateFormat
@@ -66,7 +65,7 @@ class AddProductoActivity : AppCompatActivity(){
 
         cargarCategorias()
         iniciarUbicacion()
-        btnSubirImagen.setOnClickListener { picker() }
+        ivAddProduct.setOnClickListener { picker() }
         btnSubirProducto.setOnClickListener { comprobarCampos() }
     }
 
@@ -144,7 +143,7 @@ class AddProductoActivity : AppCompatActivity(){
     }
 
     private fun addProduct(){
-        inicia()
+        Util.inicia(this)
         val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm")
         var producto = Producto(
                 "${etNombreProducto.text} ${formatter.format(Date())}",
@@ -160,14 +159,14 @@ class AddProductoActivity : AppCompatActivity(){
                 "KGqBjsuqe0747tCzBeyu",
                 if(imagenRuta == null) "" else imagenRuta!!
             )
-        addProductoColeccionProductos(producto)
-        addProductoColeccionUsuarios(producto)
-        addProductoColeccionCategorias(producto)
+        FireStoreUtil.addProductoColeccionProductos(producto)
+        FireStoreUtil.addProductoColeccionUsuarios(producto)
+        FireStoreUtil.addProductoColeccionCategorias(producto)
         finish()
-        finaliza()
+        Util.finaliza()
     }
 
-    private fun addProductoColeccionProductos(producto:Producto){
+    /*private fun addProductoColeccionProductos(producto:Producto){
         db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
     }
 
@@ -178,7 +177,7 @@ class AddProductoActivity : AppCompatActivity(){
     private fun addProductoColeccionCategorias(producto: Producto){
         db.collection(COLECCION_CATEGORIA).document(arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id).collection(
             SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
-    }
+    }*/
 
     private fun picker(){
         val itemModelc = ItemModel(ItemModel.ITEM_CAMERA)
@@ -205,7 +204,7 @@ class AddProductoActivity : AppCompatActivity(){
     }
 
     private fun subirImagen(){
-        inicia()
+        Util.inicia(this)
         var storageRef = FirebaseStorage.getInstance().reference
         riversRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
         var uploadTask = riversRef.putFile(uriImagen!!)
@@ -221,17 +220,9 @@ class AddProductoActivity : AppCompatActivity(){
         var storageRef = FirebaseStorage.getInstance().reference
         storageRef.child(path).downloadUrl.addOnSuccessListener {
             imagenRuta = it.toString()
-            finaliza()
+            Util.finaliza()
             addProduct()
         }
     }
 
-    private fun inicia(){
-        p=indeterminateProgressDialog("Uploading product")
-        p.show()
-    }
-
-    private fun finaliza(){
-        p.hide()
-    }
 }
