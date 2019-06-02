@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.viewmodel
+package net.azarquiel.fukkuapp.adapter
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.row_message.view.*
 import net.azarquiel.fukkuapp.model.Message
 import android.view.Gravity
-import kotlinx.android.synthetic.main.activity_chat.view.*
 import net.azarquiel.fukkuapp.R
 import java.text.SimpleDateFormat
 

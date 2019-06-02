@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.view
+package net.azarquiel.fukkuapp.views
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -17,9 +17,8 @@ import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.Message
 import net.azarquiel.fukkuapp.model.ProductoPruebas
-import net.azarquiel.fukkuapp.model.User
 import net.azarquiel.fukkuapp.util.FirestoreUtil
-import net.azarquiel.fukkuapp.viewmodel.MessagesAdapter
+import net.azarquiel.fukkuapp.adapter.MessagesAdapter
 import java.util.*
 import kotlin.collections.ArrayList
 

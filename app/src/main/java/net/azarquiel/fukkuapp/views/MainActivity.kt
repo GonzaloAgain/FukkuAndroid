@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Views
+package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,14 +17,12 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.ViewPagerAdapter
-import net.azarquiel.fukkuapp.Fragments.Fragment_categorias
-import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_categoria_fav
-import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
+import net.azarquiel.fukkuapp.fragments.Fragment_categorias
+import net.azarquiel.fukkuapp.fragments.Fragment_productos_por_categoria_fav
+import net.azarquiel.fukkuapp.fragments.Fragment_productos_por_cercania
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.*
-import net.azarquiel.fukkuapp.view.LoginActivity
-import net.azarquiel.fukkuapp.view.OpenChatsActivity
+import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask

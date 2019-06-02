@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Views
+package net.azarquiel.fukkuapp.views
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.*
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -21,7 +22,7 @@ import kotlinx.android.synthetic.main.activity_add_producto.*
 import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.toast
 import java.util.*
 
@@ -157,12 +158,12 @@ class AddProductoActivity : AppCompatActivity(){
                 "${longitude}",
                 categoria.id,
                 categoria.nombre,
-                "KGqBjsuqe0747tCzBeyu",
+                FirebaseAuth.getInstance().currentUser!!.uid,
                 if(imagenRuta == null) "" else imagenRuta!!
             )
-        FireStoreUtil.addProductoColeccionProductos(producto)
-        FireStoreUtil.addProductoColeccionUsuarios(producto)
-        FireStoreUtil.addProductoColeccionCategorias(producto)
+        FirestoreUtil.addProductoColeccionProductos(producto)
+        FirestoreUtil.addProductoColeccionUsuarios(producto)
+        FirestoreUtil.addProductoColeccionCategorias(producto)
         finish()
         Util.finaliza()
     }

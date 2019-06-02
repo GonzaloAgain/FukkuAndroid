@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.view
+package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.os.Bundle
@@ -16,7 +16,7 @@ import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.Chat
 import net.azarquiel.fukkuapp.model.ChatChannel
 import net.azarquiel.fukkuapp.util.FirestoreUtil
-import net.azarquiel.fukkuapp.viewmodel.ChatsAdapter
+import net.azarquiel.fukkuapp.adapter.ChatsAdapter
 
 class OpenChatsActivity : AppCompatActivity() {
 

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_productos_de_un_categoria"
-        tools:context=".Views.Productos_de_un_categoria" android:id="@+id/refreshProductosCategoria">
+        tools:context=".views.Productos_de_un_categoria" android:id="@+id/refreshProductosCategoria">
 
     <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"

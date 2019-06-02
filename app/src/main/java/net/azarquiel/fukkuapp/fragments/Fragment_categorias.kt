@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Fragments
+package net.azarquiel.fukkuapp.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -8,10 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_fragment_categorias.*
-import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
+import net.azarquiel.fukkuapp.adapter.CustomAdapterCategorias
 import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.COLECCION_CATEGORIA
+import net.azarquiel.fukkuapp.util.COLECCION_CATEGORIA
 import java.util.ArrayList
 
 class Fragment_categorias : Fragment() {

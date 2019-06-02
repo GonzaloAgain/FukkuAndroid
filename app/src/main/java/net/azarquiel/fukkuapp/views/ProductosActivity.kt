@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Views
+package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.os.Bundle
@@ -16,9 +16,9 @@ import com.google.firebase.firestore.QuerySnapshot
 
 import kotlinx.android.synthetic.main.activity_productos.*
 import kotlinx.android.synthetic.main.content_productos.*
-import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
+import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.Model.Producto
-import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.util.*
 import net.azarquiel.fukkuapp.R
 import org.jetbrains.anko.toast
 

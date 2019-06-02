@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp
+package net.azarquiel.fukkuapp.views
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -26,6 +26,7 @@ import com.robertlevonyan.components.picker.ItemModel
 import com.robertlevonyan.components.picker.PickerDialog
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.content_profile.*
+import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.User
 import org.jetbrains.anko.*
 import java.util.*

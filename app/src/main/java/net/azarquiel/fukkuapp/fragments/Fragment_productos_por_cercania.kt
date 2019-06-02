@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Fragments
+package net.azarquiel.fukkuapp.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -11,17 +11,16 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_productos_cerca_de_ti.*
-import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
+import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.toast
 
 class Fragment_productos_por_cercania : Fragment(){

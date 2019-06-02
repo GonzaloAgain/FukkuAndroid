@@ -1,23 +1,20 @@
-package net.azarquiel.fukkuapp.Views
+package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 
 import kotlinx.android.synthetic.main.activity_categoria.*
 import kotlinx.android.synthetic.main.content_categoria.*
-import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
+import net.azarquiel.fukkuapp.adapter.CustomAdapterCategorias
 import net.azarquiel.fukkuapp.Model.Categoria
-import net.azarquiel.fukkuapp.Model.Producto
-import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.util.*
 import net.azarquiel.fukkuapp.R
 
 class CategoriaActivity : AppCompatActivity() {

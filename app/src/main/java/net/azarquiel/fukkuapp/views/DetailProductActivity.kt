@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Views
+package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -19,9 +20,8 @@ import kotlinx.android.synthetic.main.content_detail_product.*
 import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.*
-import net.azarquiel.fukkuapp.Util.Util
-import net.azarquiel.fukkuapp.view.ChatActivity
+import net.azarquiel.fukkuapp.util.*
+import net.azarquiel.fukkuapp.util.Util
 import org.jetbrains.anko.toast
 
 class DetailProductActivity : AppCompatActivity() {
@@ -153,7 +153,7 @@ class DetailProductActivity : AppCompatActivity() {
     }
 
     private fun checkUser(menu: Menu){
-        if(producto.usuarioId == "KGqBjsuqe0747tCzBeyu"){
+        if(producto.usuarioId == FirebaseAuth.getInstance().currentUser!!.uid){
             menu.findItem(R.id.action_favorito_product).isVisible = false
             fab.hide()
         }else{
@@ -161,14 +161,12 @@ class DetailProductActivity : AppCompatActivity() {
             menu.findItem(R.id.action_update_product).isVisible = false
             checkFavorite(menu)
             fab.setOnClickListener {
-                val otherUserID = "6k1OoITcwOO1QTvzoDBz36hoBAK2"
-                val productID = "Producto 1 02-06-2019 02:44"
-                FirestoreUtil.getOrCreateChatChannel(otherUserID, productID){ channelID ->
+                FirestoreUtil.getOrCreateChatChannel(producto.usuarioId, producto.id){ channelID ->
                     //toast("Haber que me saca: ${channelID}")
                     val intent = Intent(this, ChatActivity::class.java)
                     intent.putExtra(AppConstants.CHANNEL_ID, channelID)
-                    intent.putExtra(AppConstants.OTHER_USER_ID, otherUserID)
-                    intent.putExtra(AppConstants.PRODUCT_ID, productID)
+                    intent.putExtra(AppConstants.OTHER_USER_ID, producto.usuarioId)
+                    intent.putExtra(AppConstants.PRODUCT_ID, producto.id)
                     startActivity(intent)
                 }
             }

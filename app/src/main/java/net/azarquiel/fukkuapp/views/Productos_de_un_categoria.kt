@@ -1,8 +1,7 @@
-package net.azarquiel.fukkuapp.Views
+package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
@@ -12,11 +11,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_productos_de_un_categoria.*
 import kotlinx.android.synthetic.main.content_productos_de_un_categoria.*
-import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
+import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.toast
 import android.support.v7.widget.SearchView
 
@@ -82,11 +81,11 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
 
     private fun addDeleteFavoritos(item: MenuItem) : Boolean{
         if(!isFavorito){
-            FireStoreUtil.addToCategoriasFavoritas(categoria)
+            FirestoreUtil.addToCategoriasFavoritas(categoria)
             //addToCategoriasFavoritas()
             item.title = resources.getString(R.string.deleteFavortios)
         }else{
-            FireStoreUtil.deleteToCategoriasFavoritas(categoria)
+            FirestoreUtil.deleteToCategoriasFavoritas(categoria)
             //deleteToCategoriasFavoritas()
             item.title = resources.getString(R.string.addFavortios)
         }

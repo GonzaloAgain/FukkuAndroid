@@ -19,14 +19,14 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
-                android:name=".ProfileActivity"
+                android:name=".views.ProfileActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".view.OpenChatsActivity">
+        <activity android:name=".views.OpenChatsActivity">
         </activity>
         <activity
-                android:name=".view.SplashActivity"
+                android:name=".views.SplashActivity"
                 android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".view.ChatActivity"
+                android:name=".views.ChatActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="ChatActivity"/>
@@ -44,39 +44,39 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".view.LoginActivity"
+                android:name=".views.LoginActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".view.CreateUserActivity"
+                android:name=".views.CreateUserActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".Views.MainActivity"
+                android:name=".views.MainActivity"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".Views.DetailProductActivity"
+                android:name=".views.DetailProductActivity"
                 android:label="@string/title_activity_detail_product"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".Views.Productos_de_un_categoria"
+                android:name=".views.Productos_de_un_categoria"
                 android:label="@string/title_activity_productos_de_un_categoria"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".Views.AddProductoActivity">
+        <activity android:name=".views.AddProductoActivity">
         </activity>
         <activity
-                android:name=".Views.CategoriaActivity"
+                android:name=".views.CategoriaActivity"
                 android:label="@string/title_activity_categoria"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".Views.ProductosActivity"
+                android:name=".views.ProductosActivity"
                 android:label="@string/title_activity_productos"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>

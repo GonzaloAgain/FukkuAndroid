@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.view
+package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_login.*
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Views.MainActivity
 import net.azarquiel.fukkuapp.service.MyFirebaseInstanceIdService
 import org.jetbrains.anko.*
 

@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Fragments
+package net.azarquiel.fukkuapp.fragments
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -7,13 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_productos_por_categoria_fav.*
-import net.azarquiel.fukkuapp.Adapter.CustomAdapterProductos
+import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.util.*
 
 class Fragment_productos_por_categoria_fav : Fragment() {
 
