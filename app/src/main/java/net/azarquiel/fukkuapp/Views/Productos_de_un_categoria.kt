@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,8 +18,9 @@ import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 import org.jetbrains.anko.toast
+import android.support.v7.widget.SearchView
 
-class Productos_de_un_categoria : AppCompatActivity() {
+class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextListener{
 
     private lateinit var categoria: Categoria
     private lateinit var adapter : CustomAdapterProductos
@@ -32,21 +32,18 @@ class Productos_de_un_categoria : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_productos_de_un_categoria)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-        db = FirebaseFirestore.getInstance()
-        categoria=intent.getSerializableExtra("categoria") as Categoria
-        title = categoria.nombre
-        crearAdapter()
-        cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
+        inicializate()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_favoritos, menu)
+        menuInflater.inflate(R.menu.menu_productos_categoria, menu)
+        // ************* <Filtro> ************
+        val searchItem = menu.findItem(R.id.search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setQueryHint("Search...")
+        searchView.setOnQueryTextListener(this)
+        // ************* </Filtro> ************
         checkFavorite(menu)
         return true
     }
@@ -62,12 +59,35 @@ class Productos_de_un_categoria : AppCompatActivity() {
         return true
     }
 
+    override fun onQueryTextSubmit(p0: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        adapter.setProductos(arrayProductos.filter { p -> p.nombre.toLowerCase().contains(query!!.toLowerCase()) })
+        return false
+    }
+
+    private fun inicializate(){
+        db = FirebaseFirestore.getInstance()
+        categoria=intent.getSerializableExtra("categoria") as Categoria
+        title = categoria.nombre
+        crearAdapter()
+        cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
+        refreshProductosCategoria.setOnRefreshListener {
+            cargarProductos(COLECCION_CATEGORIA,categoria.id, SUBCOLECCION_PRODUCTOS)
+            refreshProductosCategoria.isRefreshing=false
+        }
+    }
+
     private fun addDeleteFavoritos(item: MenuItem) : Boolean{
         if(!isFavorito){
-            addToCategoriasFavoritas()
+            FireStoreUtil.addToCategoriasFavoritas(categoria)
+            //addToCategoriasFavoritas()
             item.title = resources.getString(R.string.deleteFavortios)
         }else{
-            deleteToCategoriasFavoritas()
+            FireStoreUtil.deleteToCategoriasFavoritas(categoria)
+            //deleteToCategoriasFavoritas()
             item.title = resources.getString(R.string.addFavortios)
         }
         isFavorito = !isFavorito
@@ -96,15 +116,15 @@ class Productos_de_un_categoria : AppCompatActivity() {
             }
     }
 
-    private fun addToCategoriasFavoritas(){
+    /*private fun addToCategoriasFavoritas(){
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).set(categoria)
-    }
+    }*/
 
-    private fun deleteToCategoriasFavoritas(){
+    /*private fun deleteToCategoriasFavoritas(){
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).delete()
-    }
+    }*/
 
     private fun checkFavorite(menu: Menu) {
         db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)

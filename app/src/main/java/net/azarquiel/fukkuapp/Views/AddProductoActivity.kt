@@ -1,7 +1,6 @@
 package net.azarquiel.fukkuapp.Views
 
 import android.Manifest
-import android.app.ProgressDialog
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -12,7 +11,6 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.View
-import android.view.WindowManager
 import android.widget.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -24,10 +22,8 @@ import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
-import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.toast
 import java.util.*
-import java.text.SimpleDateFormat
 
 @Suppress("DEPRECATION")
 class AddProductoActivity : AppCompatActivity(){
@@ -37,10 +33,10 @@ class AddProductoActivity : AppCompatActivity(){
     private lateinit var arrayCategorias:ArrayList<Categoria>
     private var categoriaElegida:String?=null
     private lateinit var pickerDialog: PickerDialog
-    private lateinit var riversRef: StorageReference
+    private lateinit var imageRef: StorageReference
+    private lateinit var storageRef: StorageReference
     private var imagenRuta: String?=null
     private var locationManager : LocationManager? = null
-    private lateinit var p: ProgressDialog
     private var uriImagen: Uri?=null
     private var latitude: Double?=null
     private var longitude: Double?=null
@@ -48,8 +44,12 @@ class AddProductoActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_producto)
+        inicializate()
+    }
 
+    private fun inicializate(){
         db = FirebaseFirestore.getInstance()
+        storageRef = FirebaseStorage.getInstance().reference
 
         // Create persistent LocationManager reference
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
@@ -66,7 +66,7 @@ class AddProductoActivity : AppCompatActivity(){
 
         cargarCategorias()
         iniciarUbicacion()
-        btnSubirImagen.setOnClickListener { picker() }
+        ivAddProduct.setOnClickListener { picker() }
         btnSubirProducto.setOnClickListener { comprobarCampos() }
     }
 
@@ -93,7 +93,7 @@ class AddProductoActivity : AppCompatActivity(){
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         arrayStringCategorias.add("${document.data.getValue(CAMPO_NOMBRE)}")
-                        arrayCategorias.add(Categoria(document.id,"${document.data.getValue(CAMPO_NOMBRE)}",""))
+                        arrayCategorias.add(document.toObject(Categoria::class.java))
                     }
                     cargarSpinner()
                 }
@@ -144,49 +144,30 @@ class AddProductoActivity : AppCompatActivity(){
     }
 
     private fun addProduct(){
-        inicia("Uploading product")
-        val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm")
-        var producto: Producto? = null
-        imagenRuta?.let {
-            producto = Producto(
-                "${etNombreProducto.text} ${formatter.format(Date())}",
+        Util.inicia(this)
+        var categoria = Util.sacarCategoriaConNombre(categoriaElegida!!,arrayCategorias,arrayStringCategorias)
+        var producto = Producto(
+                "${etNombreProducto.text} ${Util.formatearFecha("dd-MM-yyyy HH:mm",Date())}",
                 "${etNombreProducto.text}",
                 "nombre Usuario",
                 "${etDescripcionProducto.text}",
                 "${etPrecioProducto.text}",
-                formatter.format(Date()),
+                Util.formatearFecha("dd-MM-yyyy HH:mm",Date()),
                 "${latitude}",
                 "${longitude}",
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,
+                categoria.id,
+                categoria.nombre,
                 "KGqBjsuqe0747tCzBeyu",
-                it
+                if(imagenRuta == null) "" else imagenRuta!!
             )
-        } ?: run {
-            producto = Producto(
-                "${etNombreProducto.text} ${formatter.format(Date())}",
-                "${etNombreProducto.text}",
-                "nombre Usuario",
-                "${etDescripcionProducto.text}",
-                "${etPrecioProducto.text}",
-                formatter.format(Date()),
-                "${latitude}",
-                "${longitude}",
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id,
-                arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).nombre,
-                "KGqBjsuqe0747tCzBeyu",
-                ""
-            )
-        }
-        addProductoColeccionProductos(producto!!)
-        addProductoColeccionUsuarios(producto!!)
-        addProductoColeccionCategorias(producto!!)
-        //veces = 1
+        FireStoreUtil.addProductoColeccionProductos(producto)
+        FireStoreUtil.addProductoColeccionUsuarios(producto)
+        FireStoreUtil.addProductoColeccionCategorias(producto)
         finish()
-        finaliza()
+        Util.finaliza()
     }
 
-    private fun addProductoColeccionProductos(producto:Producto){
+    /*private fun addProductoColeccionProductos(producto:Producto){
         db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
     }
 
@@ -197,7 +178,7 @@ class AddProductoActivity : AppCompatActivity(){
     private fun addProductoColeccionCategorias(producto: Producto){
         db.collection(COLECCION_CATEGORIA).document(arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id).collection(
             SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
-    }
+    }*/
 
     private fun picker(){
         val itemModelc = ItemModel(ItemModel.ITEM_CAMERA)
@@ -224,26 +205,23 @@ class AddProductoActivity : AppCompatActivity(){
     }
 
     private fun subirImagen(){
-        inicia("Uploading image")
-        var storageRef = FirebaseStorage.getInstance().reference
-        riversRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
-        var uploadTask = riversRef.putFile(uriImagen!!)
+        Util.inicia(this)
+        imageRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
+        var uploadTask = imageRef.putFile(uriImagen!!)
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener {
             toast("Fallo al subir la imagen")
         }.addOnSuccessListener {
-            imagenRuta = riversRef.path
-            finaliza()
+            sacarUrlImagen(imageRef.path)
+        }
+    }
+
+    private fun sacarUrlImagen(path: String) {
+        storageRef.child(path).downloadUrl.addOnSuccessListener {
+            imagenRuta = it.toString()
+            Util.finaliza()
             addProduct()
         }
     }
 
-    private fun inicia(texto:String){
-        p=indeterminateProgressDialog(texto)
-        p.show()
-    }
-
-    private fun finaliza(){
-        p.hide()
-    }
 }

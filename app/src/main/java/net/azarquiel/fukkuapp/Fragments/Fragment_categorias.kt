@@ -11,8 +11,6 @@ import kotlinx.android.synthetic.main.activity_fragment_categorias.*
 import net.azarquiel.fukkuapp.Adapter.CustomAdapterCategorias
 import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.Util.CAMPO_ICONO
-import net.azarquiel.fukkuapp.Util.CAMPO_NOMBRE
 import net.azarquiel.fukkuapp.Util.COLECCION_CATEGORIA
 import java.util.ArrayList
 

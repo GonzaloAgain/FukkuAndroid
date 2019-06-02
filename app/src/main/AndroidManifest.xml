@@ -68,8 +68,6 @@
                 android:label="@string/title_activity_productos_de_un_categoria"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".Fragments.Fragment_categorias">
-        </activity>
         <activity android:name=".Views.AddProductoActivity">
         </activity>
         <activity

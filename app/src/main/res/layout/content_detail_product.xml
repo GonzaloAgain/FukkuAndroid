@@ -29,20 +29,20 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                <TextView
+                <EditText
                         android:text="TextView"
                         android:textSize="30sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/tvNombreDetail"
                         android:layout_weight="6"/>
-                <TextView
+                <EditText
                         android:text="TextView"
                         android:textSize="30sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/tvPrecioDetail"
                         android:layout_weight="1"/>
             </LinearLayout>
-            <TextView
+            <EditText
                     android:text="TextView"
                     android:textSize="25sp"
                     android:layout_width="match_parent"

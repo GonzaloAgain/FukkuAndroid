@@ -5,8 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.productosrow.view.*
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
@@ -49,10 +48,7 @@ class CustomAdapterProductos(val context: Context,
 
         private fun mostrarImagen(itemView:View,imagen:String){
             if(imagen != ""){
-                var storageRef = FirebaseStorage.getInstance().reference
-                storageRef.child(imagen).downloadUrl.addOnSuccessListener {
-                    Picasso.with(context).load(it).into(itemView.ivImagenProducto)
-                }
+                Glide.with(context).load(imagen).into(itemView.ivImagenProducto)
             }else{
                 itemView.ivImagenProducto.setImageResource(R.drawable.notfound)
             }
