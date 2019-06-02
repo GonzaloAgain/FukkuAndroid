@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -22,6 +23,11 @@ import net.azarquiel.fukkuapp.Fragments.Fragment_productos_por_cercania
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
+import net.azarquiel.fukkuapp.view.LoginActivity
+import net.azarquiel.fukkuapp.view.OpenChatsActivity
+import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -88,10 +94,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 categorias()
             }
             R.id.nav_chat -> {
-
+                startActivity(intentFor<OpenChatsActivity>())
             }
             R.id.nav_cerrarSesion -> {
-
+                FirebaseAuth.getInstance().signOut()
+                startActivity(intentFor<LoginActivity>().newTask().clearTask())
             }
             R.id.nav_exit -> {
                 finish()

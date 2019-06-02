@@ -1,5 +1,6 @@
 package net.azarquiel.fukkuapp.Views
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -15,10 +16,12 @@ import com.robertlevonyan.components.picker.PickerDialog
 import com.robertlevonyan.components.picker.set
 import kotlinx.android.synthetic.main.activity_detail_product.*
 import kotlinx.android.synthetic.main.content_detail_product.*
+import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.Util.*
 import net.azarquiel.fukkuapp.Util.Util
+import net.azarquiel.fukkuapp.view.ChatActivity
 import org.jetbrains.anko.toast
 
 class DetailProductActivity : AppCompatActivity() {
@@ -152,11 +155,23 @@ class DetailProductActivity : AppCompatActivity() {
     private fun checkUser(menu: Menu){
         if(producto.usuarioId == "KGqBjsuqe0747tCzBeyu"){
             menu.findItem(R.id.action_favorito_product).isVisible = false
-            //Todo quitar boton flotante
+            fab.hide()
         }else{
             menu.findItem(R.id.action_delete_product).isVisible = false
             menu.findItem(R.id.action_update_product).isVisible = false
             checkFavorite(menu)
+            fab.setOnClickListener {
+                val otherUserID = "6k1OoITcwOO1QTvzoDBz36hoBAK2"
+                val productID = "Producto 1 02-06-2019 02:44"
+                FirestoreUtil.getOrCreateChatChannel(otherUserID, productID){ channelID ->
+                    //toast("Haber que me saca: ${channelID}")
+                    val intent = Intent(this, ChatActivity::class.java)
+                    intent.putExtra(AppConstants.CHANNEL_ID, channelID)
+                    intent.putExtra(AppConstants.OTHER_USER_ID, otherUserID)
+                    intent.putExtra(AppConstants.PRODUCT_ID, productID)
+                    startActivity(intent)
+                }
+            }
         }
     }
 
