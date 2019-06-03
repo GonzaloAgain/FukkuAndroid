@@ -31,7 +31,7 @@ data class Producto(
     val latitud : String = "",
     val longitud : String = "",
     val categoriaId : String = "",
-    val nombreCategoria : String = "",
+    var nombreCategoria : String = "",
     val usuarioId : String = "",
     var imagen : String = ""
 ):Serializable

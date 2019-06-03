@@ -17,6 +17,7 @@ import android.view.WindowManager
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
@@ -24,8 +25,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.robertlevonyan.components.picker.ItemModel
 import com.robertlevonyan.components.picker.PickerDialog
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.content_profile.*
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.User
 import org.jetbrains.anko.*
@@ -51,6 +54,7 @@ class ProfileActivity : AppCompatActivity() {
         itProfileGender.inputType = InputType.TYPE_NULL
 
         user = FirebaseAuth.getInstance().currentUser!!
+
 
         getUser()
         editData()
@@ -160,6 +164,13 @@ class ProfileActivity : AppCompatActivity() {
                 "email" to itProfileEmail.text.toString()
             ))
 
+
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName(itProfileName.text.toString())
+            .build()
+
+        user.updateProfile(profileUpdates)
+
         editData()
         toast("Datos actualizados")
     }
@@ -218,6 +229,12 @@ class ProfileActivity : AppCompatActivity() {
         var storageRef = FirebaseStorage.getInstance().reference
         storageRef.child(path).downloadUrl.addOnSuccessListener {
             docRef.update("profilePhoto", it.toString())
+
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setPhotoUri(Uri.parse(it.toString()))
+                .build()
+
+            user.updateProfile(profileUpdates)
         }
     }
 
@@ -274,6 +291,11 @@ class ProfileActivity : AppCompatActivity() {
         }else{
             ivProfile.setImageResource(R.drawable.ic_fukku_logo)
         }
+
+        /*val ivAvatar = nav_view.getHeaderView(0).imageUser
+        if (user.photoUrl.toString() != "null") Glide.with(this).load(user.photoUrl).into(ivAvatar)
+        val tvNick = nav_view.getHeaderView(0).nick
+        tvNick.text = user.displayName*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

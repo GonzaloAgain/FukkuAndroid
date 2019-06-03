@@ -108,7 +108,9 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         if(document.data.getValue(CAMPO_IDUSUARIO).toString() != FireStoreUtil.uidUser()){
-                            arrayProductos.add(document.toObject(Producto::class.java))
+                            var producto = document.toObject(Producto::class.java)
+                            producto.nombreCategoria = ""
+                            arrayProductos.add(producto)
                         }
                     }
                     adapter.setProductos(arrayProductos)

@@ -10,19 +10,25 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.Model.Producto
 import net.azarquiel.fukkuapp.Model.ViewPagerAdapter
+import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.fragments.Fragment_categorias
 import net.azarquiel.fukkuapp.fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.fragments.Fragment_productos_por_cercania
-import net.azarquiel.fukkuapp.Model.Producto
-import net.azarquiel.fukkuapp.R
-import net.azarquiel.fukkuapp.util.*
+import net.azarquiel.fukkuapp.util.COLECCION_PRODUCTOS
+import net.azarquiel.fukkuapp.util.TUS_PRODUCTOS
+import net.azarquiel.fukkuapp.util.TUS_PRODUCTOS_FAVORITOS
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
@@ -30,6 +36,8 @@ import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    private lateinit var ivAvatar: CircleImageView
+    private lateinit var tvNick: TextView
     private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,10 +57,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
+        val linearProfile = nav_view.getHeaderView(0).LinearProfileMainPage
+        linearProfile.setOnClickListener {
+            startActivity(intentFor<ProfileActivity>())
+        }
+        ivAvatar = nav_view.getHeaderView(0).imageUser
+        tvNick = nav_view.getHeaderView(0).nick
+
+        showUserInformation()
+
         nav_view.setNavigationItemSelectedListener(this)
         db = FirebaseFirestore.getInstance()
         setupViewPager(viewPager)
         tabs.setupWithViewPager(viewPager)
+    }
+
+    private fun showUserInformation() {
+        val userAuth = FirebaseAuth.getInstance().currentUser
+        tvNick.text = userAuth!!.displayName
+
+        if(userAuth.photoUrl.toString() != "null"){
+            Glide.with(this).load(userAuth.photoUrl).into(ivAvatar)
+        }else{
+            ivAvatar.setImageResource(R.drawable.user)
+        }
     }
 
     override fun onBackPressed() {

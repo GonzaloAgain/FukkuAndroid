@@ -207,9 +207,10 @@ class AddProductoActivity : AppCompatActivity(){
     //metodo que carga el producto con los datos y lo sube a firestore
     private fun addProduct(){
         Util.inicia(this)
+        val idDocumento = FirebaseFirestore.getInstance().collection("Productos").document()
         var categoria = Util.sacarCategoriaConNombre(categoriaElegida!!,arrayCategorias,arrayStringCategorias)
         var producto = Producto(
-            "${etNombreProducto.text} ${Util.formatearFecha("dd-MM-yyyy HH:mm",Date())}",
+            idDocumento.id,
             "${etNombreProducto.text}",
             FireStoreUtil.nameUser(),
             "${etDescripcionProducto.text}",

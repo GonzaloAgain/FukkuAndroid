@@ -2,6 +2,7 @@ package net.azarquiel.fukkuapp.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,9 +41,14 @@ class CustomAdapterProductos(val context: Context,
         fun bind(dataItem: Producto){
             mostrarImagen(itemView, dataItem.imagen)
             itemView.tvNombreProducto.text=dataItem.nombre
-            itemView.tvDescripcionProducto.text=dataItem.descripcion
+            if (dataItem.nombreCategoria != "") {
+                itemView.tvCategoriaProducto.text=dataItem.nombreCategoria
+                itemView.tvCategoriaProducto.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18.0F)
+            } else {
+                itemView.tvCategoriaProducto.setTextSize(TypedValue.COMPLEX_UNIT_SP, 0.0F)
+            }
             itemView.tvFechaProducto.text=dataItem.fecha
-            itemView.tvPrecioProducto.text=dataItem.precio
+            itemView.tvPrecioProducto.text= dataItem.precio + "€"
             itemView.tag=dataItem
         }
 
