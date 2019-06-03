@@ -66,7 +66,7 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
         if(accion == TUS_PRODUCTOS){
             //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
             title = resources.getString(R.string.productosNav)
-            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS)
+            cargarProductos(COLECCION_USUARIOS,FireStoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS)
             fab.setOnClickListener { view ->
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
@@ -74,7 +74,7 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
         }else if(accion == TUS_PRODUCTOS_FAVORITOS){
             //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
             title = resources.getString(R.string.productosFavNav)
-            cargarProductos(COLECCION_USUARIOS,"KGqBjsuqe0747tCzBeyu",SUBCOLECCION_PRODUCTOS_FAVORITOS)
+            cargarProductos(COLECCION_USUARIOS,FireStoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS_FAVORITOS)
             fab.hide()
         }
     }

@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Util
+package net.azarquiel.fukkuapp.util
 
 object StorageUtil {
 

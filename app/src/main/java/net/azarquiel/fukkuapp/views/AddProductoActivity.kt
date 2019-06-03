@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import android.view.View
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
@@ -48,6 +49,7 @@ class AddProductoActivity : AppCompatActivity(){
         inicializate()
     }
 
+    //Se inicializan todas las variables necesarias y se inician los metodos
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         storageRef = FirebaseStorage.getInstance().reference
@@ -68,23 +70,10 @@ class AddProductoActivity : AppCompatActivity(){
         cargarCategorias()
         iniciarUbicacion()
         ivAddProduct.setOnClickListener { picker() }
-        btnSubirProducto.setOnClickListener { comprobarCampos() }
+        btnSubirProducto.setOnClickListener { validaciones() }
     }
 
-    //define the listener
-    private val locationListener: LocationListener = object : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            latitude = location.latitude
-            longitude = location.longitude
-        }
-        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-        override fun onProviderEnabled(provider: String) {}
-        override fun onProviderDisabled(provider: String) {
-            latitude = null
-            longitude = null
-        }
-    }
-
+    //Cargar todas las categorias para introducir al spinner
     private fun cargarCategorias(){
         arrayStringCategorias= ArrayList()
         arrayCategorias= ArrayList()
@@ -101,6 +90,7 @@ class AddProductoActivity : AppCompatActivity(){
             }
     }
 
+    //cargar spinner con el array de nombres de categorias y metodo que se ejecuta cuando seleccionas un item
     private fun cargarSpinner(){
         spinnerCategorias.adapter=ArrayAdapter(this, android.R.layout.simple_spinner_item, arrayStringCategorias)
         spinnerCategorias.onItemSelectedListener= object : AdapterView.OnItemSelectedListener{
@@ -111,6 +101,8 @@ class AddProductoActivity : AppCompatActivity(){
         }
     }
 
+    //iniciar la variable locationManager con el listener
+    //Si no has aceptado los permisos de ubicacion te vuelve a saltar el mensaje
     private fun iniciarUbicacion(){
         try {
             // Request location updates
@@ -124,15 +116,35 @@ class AddProductoActivity : AppCompatActivity(){
         }
     }
 
-    private fun comprobarCampos() {
+    //listener de la ubicacion que coge la longitud y latitud cuando la ubicacion cambia
+    //Y pone a null las variables cuando se desactiva la ubicacion
+    private val locationListener: LocationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            latitude = location.latitude
+            longitude = location.longitude
+        }
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+        override fun onProviderEnabled(provider: String) {}
+        override fun onProviderDisabled(provider: String) {
+            latitude = null
+            longitude = null
+        }
+    }
+
+   /* private fun comprobarCampos() {
         if(!etNombreProducto.text.isNullOrBlank() && !etDescripcionProducto.text.isNullOrBlank() && !etPrecioProducto.text.isNullOrBlank() && !categoriaElegida.isNullOrEmpty()){
             beginAddProduct()
         }else{
             toast("Tienes que rellenar todos los campos")
         }
-    }
+    }*/
 
-    private fun beginAddProduct(){
+    //metodo de comprobacion antes de subir el producto
+    private fun validaciones(){
+        if (!validateForm()) {
+            return
+        }
+
         if(latitude !=null && longitude != null) {
             if (uriImagen != null) {
                 subirImagen()
@@ -144,43 +156,7 @@ class AddProductoActivity : AppCompatActivity(){
         }
     }
 
-    private fun addProduct(){
-        Util.inicia(this)
-        var categoria = Util.sacarCategoriaConNombre(categoriaElegida!!,arrayCategorias,arrayStringCategorias)
-        var producto = Producto(
-                "${etNombreProducto.text} ${Util.formatearFecha("dd-MM-yyyy HH:mm",Date())}",
-                "${etNombreProducto.text}",
-                "nombre Usuario",
-                "${etDescripcionProducto.text}",
-                "${etPrecioProducto.text}",
-                Util.formatearFecha("dd-MM-yyyy HH:mm",Date()),
-                "${latitude}",
-                "${longitude}",
-                categoria.id,
-                categoria.nombre,
-                FirebaseAuth.getInstance().currentUser!!.uid,
-                if(imagenRuta == null) "" else imagenRuta!!
-            )
-        FirestoreUtil.addProductoColeccionProductos(producto)
-        FirestoreUtil.addProductoColeccionUsuarios(producto)
-        FirestoreUtil.addProductoColeccionCategorias(producto)
-        finish()
-        Util.finaliza()
-    }
-
-    /*private fun addProductoColeccionProductos(producto:Producto){
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
-    }
-
-    private fun addProductoColeccionUsuarios(producto: Producto){
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
-    }
-
-    private fun addProductoColeccionCategorias(producto: Producto){
-        db.collection(COLECCION_CATEGORIA).document(arrayCategorias.get(arrayStringCategorias.indexOf(categoriaElegida)).id).collection(
-            SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
-    }*/
-
+    //picker donde seleccionas una imagen y te saca su URI
     private fun picker(){
         val itemModelc = ItemModel(ItemModel.ITEM_CAMERA)
         val itemModelg = ItemModel(ItemModel.ITEM_GALLERY)
@@ -205,6 +181,7 @@ class AddProductoActivity : AppCompatActivity(){
         pickerDialog.show(supportFragmentManager, "")
     }
 
+    //metodo que sube la imagen al storage
     private fun subirImagen(){
         Util.inicia(this)
         imageRef = storageRef.child("images").child(uriImagen!!.lastPathSegment)
@@ -212,11 +189,13 @@ class AddProductoActivity : AppCompatActivity(){
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener {
             toast("Fallo al subir la imagen")
+            Util.finaliza()
         }.addOnSuccessListener {
             sacarUrlImagen(imageRef.path)
         }
     }
 
+    //metodo que saca la url de la imagen para poder añadirsela al producto
     private fun sacarUrlImagen(path: String) {
         storageRef.child(path).downloadUrl.addOnSuccessListener {
             imagenRuta = it.toString()
@@ -225,4 +204,56 @@ class AddProductoActivity : AppCompatActivity(){
         }
     }
 
+    //metodo que carga el producto con los datos y lo sube a firestore
+    private fun addProduct(){
+        Util.inicia(this)
+        var categoria = Util.sacarCategoriaConNombre(categoriaElegida!!,arrayCategorias,arrayStringCategorias)
+        var producto = Producto(
+            "${etNombreProducto.text} ${Util.formatearFecha("dd-MM-yyyy HH:mm",Date())}",
+            "${etNombreProducto.text}",
+            FireStoreUtil.nameUser(),
+            "${etDescripcionProducto.text}",
+            "${etPrecioProducto.text}",
+            Util.formatearFecha("dd-MM-yyyy HH:mm",Date()),
+            "${latitude}",
+            "${longitude}",
+            categoria.id,
+            categoria.nombre,
+            FireStoreUtil.uidUser(),
+            if(imagenRuta == null) "" else imagenRuta!!
+        )
+        FireStoreUtil.addProductoColeccionProductos(producto)
+        FireStoreUtil.addProductoColeccionUsuarios(producto)
+        FireStoreUtil.addProductoColeccionCategorias(producto)
+        finish()
+        Util.finaliza()
+    }
+
+    //metodo que compruba los campos que estan vacios para sacar un mensaje de error
+    private fun validateForm(): Boolean {
+        var valid = true
+
+        if (TextUtils.isEmpty(etNombreProducto.text)) {
+            etNombreProducto.error = "Required."
+            valid = false
+        } else {
+            etNombreProducto.error = null
+        }
+
+        if (TextUtils.isEmpty(etDescripcionProducto.text)) {
+            etDescripcionProducto.error = "Required."
+            valid = false
+        } else {
+            etDescripcionProducto.error = null
+        }
+
+        if (TextUtils.isEmpty(etPrecioProducto.text)) {
+            etPrecioProducto.error = "Required."
+            valid = false
+        } else {
+            etPrecioProducto.error = null
+        }
+
+        return valid
+    }
 }

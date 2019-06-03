@@ -5,7 +5,7 @@ package net.azarquiel.fukkuapp.service
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.FirebaseInstanceIdService
-import net.azarquiel.fukkuapp.util.FirestoreUtil
+import net.azarquiel.fukkuapp.util.FireStoreUtil
 
 class MyFirebaseInstanceIdService : FirebaseInstanceIdService() {
     override fun onTokenRefresh() {
@@ -19,12 +19,12 @@ class MyFirebaseInstanceIdService : FirebaseInstanceIdService() {
         fun addTokentoFireStore(newResgistrationToken: String?){
             if (newResgistrationToken == null) throw NullPointerException("FCM is null")
 
-            FirestoreUtil.getFCMRegistrationTokens { tokens ->
+            FireStoreUtil.getFCMRegistrationTokens { tokens ->
                 if (tokens.contains(newResgistrationToken))
                     return@getFCMRegistrationTokens
 
                 tokens.add(newResgistrationToken)
-                FirestoreUtil.setFCMRegistrationTokens(tokens)
+                FireStoreUtil.setFCMRegistrationTokens(tokens)
             }
         }
     }

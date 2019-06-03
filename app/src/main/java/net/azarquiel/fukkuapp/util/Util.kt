@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Util
+package net.azarquiel.fukkuapp.util
 
 import android.Manifest
 import android.app.ProgressDialog
@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils
+import kotlinx.android.synthetic.main.activity_create_user.*
 import net.azarquiel.fukkuapp.Model.Categoria
 import org.jetbrains.anko.indeterminateProgressDialog
 import java.text.SimpleDateFormat

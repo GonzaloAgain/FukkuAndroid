@@ -36,9 +36,9 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         arrayCategoriasInteres=ArrayList()
         db=FirebaseFirestore.getInstance()
         crearAdapter()
-        cargarCategoriasInteres("KGqBjsuqe0747tCzBeyu")
+        cargarCategoriasInteres(FireStoreUtil.uidUser())
         refreshProductosCategoriasInteres.setOnRefreshListener {
-            cargarCategoriasInteres("KGqBjsuqe0747tCzBeyu")
+            cargarCategoriasInteres(FireStoreUtil.uidUser())
             refreshProductosCategoriasInteres.isRefreshing=false
         }
     }
@@ -72,7 +72,9 @@ class Fragment_productos_por_categoria_fav : Fragment() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         for (document in task.result!!) {
-                            arrayProductos.add(document.toObject(Producto::class.java))
+                            if(document.data.getValue(CAMPO_IDUSUARIO).toString() != FireStoreUtil.uidUser()){
+                                arrayProductos.add(document.toObject(Producto::class.java))
+                            }
                         }
                         adapter.setProductos(arrayProductos.sortedBy {it.fecha}.reversed())
                     }

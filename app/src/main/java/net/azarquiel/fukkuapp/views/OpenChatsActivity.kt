@@ -15,7 +15,7 @@ import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.Chat
 import net.azarquiel.fukkuapp.model.ChatChannel
-import net.azarquiel.fukkuapp.util.FirestoreUtil
+import net.azarquiel.fukkuapp.util.FireStoreUtil
 import net.azarquiel.fukkuapp.adapter.ChatsAdapter
 
 class OpenChatsActivity : AppCompatActivity() {
@@ -60,7 +60,7 @@ class OpenChatsActivity : AppCompatActivity() {
                 }
             }
 
-            FirestoreUtil.getOrCreateChatChannel(otherUserID, channel.productID){ channelID ->
+            FireStoreUtil.getOrCreateChatChannel(otherUserID, channel.productID){ channelID ->
                 val intent = Intent(this, ChatActivity::class.java)
                 intent.putExtra(AppConstants.CHANNEL_ID, channelID)
                 intent.putExtra(AppConstants.OTHER_USER_ID,otherUserID)

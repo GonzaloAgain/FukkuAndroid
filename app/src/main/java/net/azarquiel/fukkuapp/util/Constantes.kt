@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Util
+package net.azarquiel.fukkuapp.util
 
 const val TUS_PRODUCTOS="tusproductos"
 const val TUS_PRODUCTOS_FAVORITOS="tusproductosfavoritos"
@@ -15,6 +15,7 @@ const val CAMPO_NOMBRE="nombre"
 const val CAMPO_LATITUD="latitud"
 const val CAMPO_LONGITUD="longitud"
 const val CAMPO_FECHA="fecha"
+const val CAMPO_IDUSUARIO="usuarioId"
 
 const val METROS_PRODUCTOS_CERCANOS = 10000
 

@@ -33,20 +33,20 @@
                         android:text="TextView"
                         android:textSize="30sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/tvNombreDetail"
+                        android:layout_height="wrap_content" android:id="@+id/etNombreDetail"
                         android:layout_weight="6"/>
                 <EditText
                         android:text="TextView"
                         android:textSize="30sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/tvPrecioDetail"
+                        android:layout_height="wrap_content" android:id="@+id/etPrecioDetail"
                         android:layout_weight="1"/>
             </LinearLayout>
             <EditText
                     android:text="TextView"
                     android:textSize="25sp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/tvDescripcionDetail"
+                    android:layout_height="wrap_content" android:id="@+id/etDescripcionDetail"
                     android:layout_weight="6"/>
             <LinearLayout
                     android:orientation="horizontal"

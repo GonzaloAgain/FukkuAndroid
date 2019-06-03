@@ -81,11 +81,11 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
 
     private fun addDeleteFavoritos(item: MenuItem) : Boolean{
         if(!isFavorito){
-            FirestoreUtil.addToCategoriasFavoritas(categoria)
+            FireStoreUtil.addToCategoriasFavoritas(categoria)
             //addToCategoriasFavoritas()
             item.title = resources.getString(R.string.deleteFavortios)
         }else{
-            FirestoreUtil.deleteToCategoriasFavoritas(categoria)
+            FireStoreUtil.deleteToCategoriasFavoritas(categoria)
             //deleteToCategoriasFavoritas()
             item.title = resources.getString(R.string.addFavortios)
         }
@@ -107,26 +107,17 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
-                        //Log.d("Jonay", "${document.data.getValue("Descripcion")}")
-                        arrayProductos.add(document.toObject(Producto::class.java))
+                        if(document.data.getValue(CAMPO_IDUSUARIO).toString() != FireStoreUtil.uidUser()){
+                            arrayProductos.add(document.toObject(Producto::class.java))
+                        }
                     }
                     adapter.setProductos(arrayProductos)
                 }
             }
     }
 
-    /*private fun addToCategoriasFavoritas(){
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
-            .document(categoria.id).set(categoria)
-    }*/
-
-    /*private fun deleteToCategoriasFavoritas(){
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
-            .document(categoria.id).delete()
-    }*/
-
     private fun checkFavorite(menu: Menu) {
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

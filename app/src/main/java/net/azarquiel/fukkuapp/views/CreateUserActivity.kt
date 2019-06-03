@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_create_user.*
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.User
 import net.azarquiel.fukkuapp.service.MyFirebaseInstanceIdService
-import net.azarquiel.fukkuapp.util.FirestoreUtil
+import net.azarquiel.fukkuapp.util.FireStoreUtil
 
 class CreateUserActivity : AppCompatActivity() {
 
@@ -71,7 +71,7 @@ class CreateUserActivity : AppCompatActivity() {
     private fun createUserFirestore() {
         user = auth.currentUser!!
         val userFirestore = User(name, surnames, email, user.uid, mutableListOf(),"","","")
-        FirestoreUtil.createUserFirestore(userFirestore)
+        FireStoreUtil.createUserFirestore(userFirestore)
 
         val registrationToken = FirebaseInstanceId.getInstance().token
         MyFirebaseInstanceIdService.addTokentoFireStore(registrationToken)

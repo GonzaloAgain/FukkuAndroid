@@ -5,10 +5,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -47,11 +51,12 @@ class DetailProductActivity : AppCompatActivity() {
         inicializate()
     }
 
+    //metodo donde se incializan las variables necesarias y se llama a los metodos necesarios para comenzar el proceso
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         producto=intent.getSerializableExtra("producto") as Producto
         title = producto.nombre
-        showProduct()
+        getProducto()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -75,17 +80,19 @@ class DetailProductActivity : AppCompatActivity() {
         return true
     }
 
+    //pinta los datos del producto
     private fun showProduct(){
         activarEditText(false)
         mostrarImagen()
-        tvNombreDetail.set(producto.nombre)
-        tvPrecioDetail.set(producto.precio)
-        tvDescripcionDetail.set(producto.descripcion)
+        etNombreDetail.set(producto.nombre)
+        etPrecioDetail.set(producto.precio)
+        etDescripcionDetail.set(producto.descripcion)
         tvFechaDetail.text = producto.fecha
         tvUsuarioDetail.text = producto.nombreUsuario
         tvCategoriaDetail.text = producto.nombreCategoria
     }
 
+    //muestra la imagen con la url guardada en el interior del producto
     private fun mostrarImagen(){
         if(producto.imagen != ""){
             Glide.with(this).load(producto.imagen).into(ivProductDetail)
@@ -93,50 +100,31 @@ class DetailProductActivity : AppCompatActivity() {
             ivProductDetail.setImageResource(R.drawable.notfound)
         }
     }
-
-    private fun deleteProducto(){
-        deleteForProductos()
-        deleteForCategoria()
-        deleteForTusProductos()
-        finish()
-    }
-
-    private fun deleteForProductos(){
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).delete()
-    }
-
-    private fun deleteForCategoria(){
-        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
-    }
-
-    private fun deleteForTusProductos(){
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
-    }
-
-    private fun addDeleteFavoritos(item: MenuItem): Boolean{
-        if(!isFavorito){
-            addToProductosFavoritos()
-            item.title = resources.getString(R.string.deleteFavortios)
+    
+    private fun checkUser(menu: Menu){
+        if(producto.usuarioId != FirebaseAuth.getInstance().currentUser!!.uid){
+            menu.findItem(R.id.action_delete_product).isVisible = false
+            menu.findItem(R.id.action_update_product).isVisible = false
+            fab.hide()
         }else{
-            deleteToProductosFavoritos()
-            item.title = resources.getString(R.string.addFavortios)
+            menu.findItem(R.id.action_favorito_product).isVisible = false
+            checkFavorite(menu)
+            fab.setOnClickListener {
+                FireStoreUtil.getOrCreateChatChannel(producto.usuarioId, producto.id){ channelID ->
+                    //toast("Haber que me saca: ${channelID}")
+                    val intent = Intent(this, ChatActivity::class.java)
+                    intent.putExtra(AppConstants.CHANNEL_ID, channelID)
+                    intent.putExtra(AppConstants.OTHER_USER_ID, producto.usuarioId)
+                    intent.putExtra(AppConstants.PRODUCT_ID, producto.id)
+                    startActivity(intent)
+                }
+            }
         }
-        isFavorito = !isFavorito
-        return true
     }
 
-    private fun addToProductosFavoritos(){
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
-            .document(producto.id).set(producto)
-    }
-
-    private fun deleteToProductosFavoritos(){
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
-            .document(producto.id).delete()
-    }
-
+    //metodo que comprueba si el producto esta en favoritos para poder cambiar el boolean y el boton del menu
     private fun checkFavorite(menu: Menu) {
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
             .document(producto.id).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -152,42 +140,57 @@ class DetailProductActivity : AppCompatActivity() {
             }
     }
 
-    private fun checkUser(menu: Menu){
-        if(producto.usuarioId == FirebaseAuth.getInstance().currentUser!!.uid){
-            menu.findItem(R.id.action_favorito_product).isVisible = false
-            fab.hide()
+    //metodo que segun una variable boolean va a añadir o eliminar el producto de favoritos cuando el usuario le de al boton del menu
+    private fun addDeleteFavoritos(item: MenuItem): Boolean{
+        if(!isFavorito){
+            FireStoreUtil.addToProductosFavoritos(producto)
+            item.title = resources.getString(R.string.deleteFavortios)
         }else{
-            menu.findItem(R.id.action_delete_product).isVisible = false
-            menu.findItem(R.id.action_update_product).isVisible = false
-            checkFavorite(menu)
-            fab.setOnClickListener {
-                FirestoreUtil.getOrCreateChatChannel(producto.usuarioId, producto.id){ channelID ->
-                    //toast("Haber que me saca: ${channelID}")
-                    val intent = Intent(this, ChatActivity::class.java)
-                    intent.putExtra(AppConstants.CHANNEL_ID, channelID)
-                    intent.putExtra(AppConstants.OTHER_USER_ID, producto.usuarioId)
-                    intent.putExtra(AppConstants.PRODUCT_ID, producto.id)
-                    startActivity(intent)
-                }
-            }
+            FireStoreUtil.deleteToProductosFavoritos(producto)
+            item.title = resources.getString(R.string.addFavortios)
         }
+        isFavorito = !isFavorito
+        return true
     }
 
+    /*private fun addToProductosFavoritos(){
+        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+            .document(producto.id).set(producto)
+    }
+
+    private fun deleteToProductosFavoritos(){
+        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+            .document(producto.id).delete()
+    }*/
+
+    //metodo que llama a funciones que eliminan el producto de firestore
+    private fun deleteProducto(){
+        FireStoreUtil.deleteForProductos(producto)
+        FireStoreUtil.deleteForCategoria(producto)
+        FireStoreUtil.deleteForTusProductos(producto)
+        finish()
+    }
+
+    //activa o descativa los edit text cuando el ususario pulsa en actualizar
     private fun editable(){
         if(!editable){
             //enable edit text
             activarEditText(true)
         }else{
+            if (!validateForm()) {
+                return
+            }
             activarEditText(false)
             checkUpdate()
         }
         editable =!editable
     }
 
+    //activa o desactiva los edit text dependiendo de un boolean
     private fun activarEditText(accion:Boolean){
-        tvNombreDetail.isEnabled = accion
-        tvPrecioDetail.isEnabled = accion
-        tvDescripcionDetail.isEnabled = accion
+        etNombreDetail.isEnabled = accion
+        etPrecioDetail.isEnabled = accion
+        etDescripcionDetail.isEnabled = accion
         ivProductDetail.setOnClickListener {
             if (accion){
                 picker()
@@ -195,6 +198,7 @@ class DetailProductActivity : AppCompatActivity() {
         }
     }
 
+    //compruba si hay imagen seleccionada o no para subir el producto directamente o antes subir la imagen
     private fun checkUpdate(){
         if(uriImagen !=null){
             subirImagen()
@@ -203,18 +207,20 @@ class DetailProductActivity : AppCompatActivity() {
         }
     }
 
+    //metodo que actualiza el producto
     private fun updateProduct(){
-        producto.nombre = "${tvNombreDetail.text}"
-        producto.descripcion = "${tvDescripcionDetail.text}"
-        producto.precio = "${tvPrecioDetail.text}"
+        producto.nombre = "${etNombreDetail.text}"
+        producto.descripcion = "${etDescripcionDetail.text}"
+        producto.precio = "${etPrecioDetail.text}"
         if(imagenRuta !=null){
             producto.imagen = imagenRuta!!
         }
         db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
-        db.collection(COLECCION_USUARIOS).document("KGqBjsuqe0747tCzBeyu").collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
         db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
     }
 
+    //picker donde seleccionas una imagen y te saca su URI
     private fun picker(){
         val itemModelc = ItemModel(ItemModel.ITEM_CAMERA)
         val itemModelg = ItemModel(ItemModel.ITEM_GALLERY)
@@ -239,6 +245,7 @@ class DetailProductActivity : AppCompatActivity() {
         pickerDialog.show(supportFragmentManager, "")
     }
 
+    //metodo que sube la imagen al storage
     private fun subirImagen(){
         Util.inicia(this)
         var storageRef = FirebaseStorage.getInstance().reference
@@ -252,6 +259,7 @@ class DetailProductActivity : AppCompatActivity() {
         }
     }
 
+    //metodo que saca la url de la imagen para poder añadirsela al producto
     private fun sacarUrlImagen(path: String) {
         var storageRef = FirebaseStorage.getInstance().reference
         storageRef.child(path).downloadUrl.addOnSuccessListener {
@@ -259,5 +267,51 @@ class DetailProductActivity : AppCompatActivity() {
             Util.finaliza()
             updateProduct()
         }
+    }
+
+    //metodo que compruba los campos que estan vacios para sacar un mensaje de error
+    private fun validateForm(): Boolean {
+        var valid = true
+
+        if (TextUtils.isEmpty(etNombreDetail.text)) {
+            etNombreDetail.error = "Required."
+            valid = false
+        } else {
+            etNombreDetail.error = null
+        }
+
+        if (TextUtils.isEmpty(etPrecioDetail.text)) {
+            etPrecioDetail.error = "Required."
+            valid = false
+        } else {
+            etPrecioDetail.error = null
+        }
+
+        if (TextUtils.isEmpty(etDescripcionDetail.text)) {
+            etDescripcionDetail.error = "Required."
+            valid = false
+        } else {
+            etDescripcionDetail.error = null
+        }
+
+        return valid
+    }
+
+    private fun getProducto() {
+        db.collection(COLECCION_PRODUCTOS).document(producto.id).
+            addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
+            if (e != null) {
+                Log.w("PROFILE", "Listen failed.", e)
+                return@EventListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                Log.d("PROFILE", "Current data: ${snapshot.data}")
+                producto = snapshot.toObject(Producto::class.java)!!
+                showProduct()
+            } else {
+                Log.d("PROFILE", "Current data: null")
+            }
+        })
     }
 }
