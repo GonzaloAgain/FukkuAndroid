@@ -128,29 +128,31 @@ object FirestoreUtil {
         firestoreInstance.collection(COLECCION_PRODUCTOS).document(producto.id).delete()
     }
 
-    fun deleteChats(producto:Producto){
-        var channelID = ""
-        var otherUserID = ""
-
-        var docRef  = firestoreInstance.document("$COLECCION_USUARIOS/${uidUser()}/Chats/${producto.id}")
+    fun deleteChat(producto: Producto){
+        val docRef  = firestoreInstance.document("$COLECCION_USUARIOS/${uidUser()}/Chats/${producto.id}")
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    val channel = document.toObject(Chat::class.java)
-                    channelID = channel!!.channelID
+                    val channelID = document.toObject(Chat::class.java)!!.channelID
+                    getOtherUserIDChat(channelID, producto)
                 }
             }
-        docRef  = firestoreInstance.document("Canales/$channelID")
+    }
+
+    private fun getOtherUserIDChat(channelID: String, producto: Producto) {
+        val docRef  = firestoreInstance.document("Canales/$channelID")
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
                     val channel = document.toObject(ChatChannel::class.java)
                     for (userID in channel!!.usersID){
-                        if (userID != uidUser()) otherUserID = userID
+                        if (userID != uidUser()) deleteChats(channelID, userID, producto)
                     }
                 }
             }
+    }
 
+    private fun deleteChats(channelID: String, otherUserID: String, producto: Producto) {
         firestoreInstance.document("$COLECCION_USUARIOS/${uidUser()}/Chats/${producto.id}").delete()
         firestoreInstance.document("$COLECCION_USUARIOS/$otherUserID/Chats/${producto.id}").delete()
         firestoreInstance.document("Canales/$channelID").delete()

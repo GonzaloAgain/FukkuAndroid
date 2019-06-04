@@ -190,7 +190,7 @@ class DetailProductActivity : AppCompatActivity() {
         FireStoreUtil.deleteForCategoria(producto)
         FireStoreUtil.deleteForTusProductos(producto)*/
         FirestoreUtil.deleteProducto(producto)
-        FirestoreUtil.deleteChats(producto)
+        FirestoreUtil.deleteChat(producto)
         finish()
     }
 
