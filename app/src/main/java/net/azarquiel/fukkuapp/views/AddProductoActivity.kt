@@ -13,15 +13,14 @@ import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import android.view.View
 import android.widget.*
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.robertlevonyan.components.picker.ItemModel
 import com.robertlevonyan.components.picker.PickerDialog
 import kotlinx.android.synthetic.main.activity_add_producto.*
-import net.azarquiel.fukkuapp.Model.Categoria
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Categoria
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.toast

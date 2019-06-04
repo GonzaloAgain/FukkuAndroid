@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_productos_por_categoria_fav.*
 import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Model.Categoria
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Categoria
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.*
 
@@ -44,7 +44,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
     }
 
     private fun crearAdapter() {
-        adapter= CustomAdapterProductos(activity!!.applicationContext, R.layout.productosrow)
+        adapter= CustomAdapterProductos(activity!!.applicationContext, R.layout.productosrow, null)
         rvProductosCategoriaFav.layoutManager= LinearLayoutManager(activity!!.applicationContext)
         rvProductosCategoriaFav.adapter=adapter
     }

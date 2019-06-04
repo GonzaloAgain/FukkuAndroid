@@ -8,11 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.productosrow.view.*
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.R
+import net.azarquiel.fukkuapp.util.FirestoreUtil
+import net.azarquiel.fukkuapp.util.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.customView
+import org.jetbrains.anko.verticalLayout
 
 class CustomAdapterProductos(val context: Context,
-                    val layout: Int
+                     val layout: Int,
+                     val accion:String?
                     ) : RecyclerView.Adapter<CustomAdapterProductos.ViewHolder>() {
 
     private var dataList: List<Producto> = emptyList()
@@ -20,7 +26,7 @@ class CustomAdapterProductos(val context: Context,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val viewlayout = layoutInflater.inflate(layout, parent, false)
-        return ViewHolder(viewlayout, context)
+        return ViewHolder(viewlayout, context, accion)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -37,7 +43,7 @@ class CustomAdapterProductos(val context: Context,
         notifyDataSetChanged()
     }
 
-    class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
+    class ViewHolder(viewlayout: View, val context: Context, val accion:String?) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Producto){
             mostrarImagen(itemView, dataItem.imagen)
             itemView.tvNombreProducto.text=dataItem.nombre
@@ -50,6 +56,7 @@ class CustomAdapterProductos(val context: Context,
             itemView.tvFechaProducto.text=dataItem.fecha
             itemView.tvPrecioProducto.text= dataItem.precio + "€"
             itemView.tag=dataItem
+            itemView.setOnLongClickListener{ eliminar(dataItem) }
         }
 
         private fun mostrarImagen(itemView:View,imagen:String){
@@ -58,6 +65,39 @@ class CustomAdapterProductos(val context: Context,
             }else{
                 itemView.ivImagenProducto.setImageResource(R.drawable.notfound)
             }
+        }
+
+        private fun eliminar(dataItem: Producto):Boolean{
+            if(accion != null){
+                if(accion == TUS_PRODUCTOS){
+                    context.alert {
+                        customView {
+                            title = "¿Desea eliminar el producto ${dataItem.nombre}?"
+                            verticalLayout {
+                                positiveButton("Confirmar") {
+                                    FirestoreUtil.deleteProducto(dataItem)
+                                }
+                                negativeButton("Cancelar") {
+                                }
+                            }
+                        }
+                    }.show()
+                }else if(accion == TUS_PRODUCTOS_FAVORITOS){
+                    context.alert {
+                        customView {
+                            title = "¿Desea eliminar de favoritos el producto ${dataItem.nombre}?"
+                            verticalLayout {
+                                positiveButton("Confirmar") {
+                                    FirestoreUtil.deleteToProductosFavoritos(dataItem)
+                                }
+                                negativeButton("Cancelar") {
+                                }
+                            }
+                        }
+                    }.show()
+                }
+            }
+            return true
         }
     }
 }

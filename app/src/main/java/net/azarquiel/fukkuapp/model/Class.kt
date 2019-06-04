@@ -1,4 +1,4 @@
-package net.azarquiel.fukkuapp.Model
+package net.azarquiel.fukkuapp.model
 
 import java.io.Serializable
 

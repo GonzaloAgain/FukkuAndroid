@@ -4,8 +4,8 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import net.azarquiel.fukkuapp.Model.Categoria
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Categoria
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.model.Chat
 import net.azarquiel.fukkuapp.model.ChatChannel
 import net.azarquiel.fukkuapp.model.Message
@@ -96,19 +96,6 @@ object FirestoreUtil {
             .document(producto.id).delete()
     }
 
-    /*fun addProductoColeccionProductos(producto: Producto){
-
-    }
-
-    fun addProductoColeccionUsuarios(producto: Producto){
-
-    }
-
-    fun addProductoColeccionCategorias(producto: Producto){
-
-    }
-    */
-
     fun updateProducto(idProducto:String, producto:Producto){
         firestoreInstance.collection(COLECCION_USUARIOS).document(uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
         firestoreInstance.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
@@ -126,6 +113,20 @@ object FirestoreUtil {
         firestoreInstance.collection(COLECCION_USUARIOS).document(uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
         firestoreInstance.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
         firestoreInstance.collection(COLECCION_PRODUCTOS).document(producto.id).delete()
+    }
+
+    fun getUsers(idProducto: String){
+        var arrayUsuarios=ArrayList<User>()
+        firestoreInstance.collection(COLECCION_USUARIOS)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    for (document in task.result!!) {
+                        arrayUsuarios.add(document.toObject(User::class.java))
+                    }
+
+                }
+            }
     }
 
     fun deleteChat(producto: Producto){
@@ -157,18 +158,6 @@ object FirestoreUtil {
         firestoreInstance.document("$COLECCION_USUARIOS/$otherUserID/Chats/${producto.id}").delete()
         firestoreInstance.document("Canales/$channelID").delete()
     }
-
-    /*fun deleteForProductos(producto:Producto){
-
-    }
-
-    fun deleteForCategoria(producto:Producto){
-
-    }
-
-    fun deleteForTusProductos(producto:Producto){
-
-    }*/
 
     fun uidUser():String{
         return FirebaseAuth.getInstance().currentUser!!.uid

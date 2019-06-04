@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_productos_cerca_de_ti.*
 import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.toast
@@ -53,7 +53,7 @@ class Fragment_productos_por_cercania : Fragment(){
     }
 
     private fun crearAdapter() {
-        adapter= CustomAdapterProductos(activity!!.applicationContext, R.layout.productosrow)
+        adapter= CustomAdapterProductos(activity!!.applicationContext, R.layout.productosrow, null)
         rvProductosCercanos.layoutManager= LinearLayoutManager(activity!!.applicationContext)
         rvProductosCercanos.adapter=adapter
     }

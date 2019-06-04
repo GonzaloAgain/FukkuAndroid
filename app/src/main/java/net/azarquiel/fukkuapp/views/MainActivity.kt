@@ -7,7 +7,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -19,16 +18,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import net.azarquiel.fukkuapp.Model.Categoria
-import net.azarquiel.fukkuapp.Model.Producto
-import net.azarquiel.fukkuapp.Model.ViewPagerAdapter
+import net.azarquiel.fukkuapp.model.Categoria
+import net.azarquiel.fukkuapp.model.Producto
+import net.azarquiel.fukkuapp.model.ViewPagerAdapter
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.fragments.Fragment_categorias
 import net.azarquiel.fukkuapp.fragments.Fragment_productos_por_categoria_fav
 import net.azarquiel.fukkuapp.fragments.Fragment_productos_por_cercania
-import net.azarquiel.fukkuapp.util.COLECCION_PRODUCTOS
-import net.azarquiel.fukkuapp.util.TUS_PRODUCTOS
-import net.azarquiel.fukkuapp.util.TUS_PRODUCTOS_FAVORITOS
+import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
@@ -91,22 +88,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
@@ -117,7 +98,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 productos(TUS_PRODUCTOS_FAVORITOS)
             }
             R.id.nav_categoriasFav -> {
-                categorias()
+                startActivity(intentFor<CategoriaActivity>())
             }
             R.id.nav_chat -> {
                 startActivity(intentFor<OpenChatsActivity>())
@@ -148,14 +129,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
-    private fun categorias(){
+    /*private fun categorias(){
         var intent= Intent(this, CategoriaActivity::class.java)
         startActivity(intent)
-    }
+    }*/
 
     private fun addProducto(){
-        var intent= Intent(this, AddProductoActivity::class.java)
-        startActivity(intent)
+        startActivity(intentFor<AddProductoActivity>())
+        /*var intent= Intent(this, AddProductoActivity::class.java)
+        startActivity(intent)*/
     }
 
     fun pulsarCategoria(v: View){
@@ -173,7 +155,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     var document = task.result
                     if(document!!.exists()){
                         var intent= Intent(this, DetailProductActivity::class.java)
-                        intent.putExtra("producto", document.toObject(Producto::class.java))
+                        intent.putExtra("producto", "${document.data!!.getValue(CAMPO_IDPRODUCTO)}")
                         startActivity(intent)
                     }else{
                         toast("Es posible que el producto haya sido borrado")

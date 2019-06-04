@@ -12,8 +12,8 @@ import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_productos_de_un_categoria.*
 import kotlinx.android.synthetic.main.content_productos_de_un_categoria.*
 import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Model.Categoria
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Categoria
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.*
 import org.jetbrains.anko.toast
@@ -94,7 +94,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
     }
 
     private fun crearAdapter(){
-        adapter= CustomAdapterProductos(this,R.layout.productosrow)
+        adapter= CustomAdapterProductos(this,R.layout.productosrow, null)
         rvProductosDeUnaCategoria.layoutManager = LinearLayoutManager(this)
         rvProductosDeUnaCategoria.adapter=adapter
     }
@@ -143,7 +143,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
                     var document = task.result
                     if(document!!.exists()){
                         var intent= Intent(this, DetailProductActivity::class.java)
-                        intent.putExtra("producto", document.toObject(Producto::class.java))
+                        intent.putExtra("producto", "${document.data!!.getValue(CAMPO_IDPRODUCTO)}")
                         startActivity(intent)
                     }else{
                         toast("Es posible que el producto haya sido borrado")

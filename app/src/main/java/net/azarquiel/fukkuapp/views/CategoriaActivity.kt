@@ -13,7 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_categoria.*
 import kotlinx.android.synthetic.main.content_categoria.*
 import net.azarquiel.fukkuapp.adapter.CustomAdapterCategorias
-import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.model.Categoria
 import net.azarquiel.fukkuapp.util.*
 import net.azarquiel.fukkuapp.R
 
@@ -37,7 +37,7 @@ class CategoriaActivity : AppCompatActivity() {
     }
 
     private fun crearAdapter(){
-        adapter= CustomAdapterCategorias(this, R.layout.categoriasrow)
+        adapter= CustomAdapterCategorias(this, R.layout.categoriasrow, TUS_CATEGORIAS_FAVORITAS)
         rvCategorias.layoutManager= LinearLayoutManager(this)
         rvCategorias.adapter=adapter
     }

@@ -7,11 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.categoriasrow.view.*
-import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.model.Categoria
 import net.azarquiel.fukkuapp.R
+import net.azarquiel.fukkuapp.util.FirestoreUtil
+import net.azarquiel.fukkuapp.util.TUS_CATEGORIAS_FAVORITAS
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.customView
+import org.jetbrains.anko.verticalLayout
 
 class CustomAdapterCategorias(val context: Context,
-                    val layout: Int
+                      val layout: Int,
+                      val accion: String?
                     ) : RecyclerView.Adapter<CustomAdapterCategorias.ViewHolder>() {
 
     private var dataList: List<Categoria> = emptyList()
@@ -19,7 +25,7 @@ class CustomAdapterCategorias(val context: Context,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val viewlayout = layoutInflater.inflate(layout, parent, false)
-        return ViewHolder(viewlayout, context)
+        return ViewHolder(viewlayout, context, accion)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -37,11 +43,12 @@ class CustomAdapterCategorias(val context: Context,
     }
 
 
-    class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
+    class ViewHolder(viewlayout: View, val context: Context, val accion: String?) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Categoria){
             mostrarIcono(dataItem.icono,itemView)
             itemView.tvNombreCategoria.text=dataItem.nombre
             itemView.tag=dataItem
+            itemView.setOnLongClickListener{eliminar(dataItem)}
         }
 
         private fun mostrarIcono(icono_categoria: String,itemView:View){
@@ -50,6 +57,24 @@ class CustomAdapterCategorias(val context: Context,
             }else{
                 itemView.ivIconoProducto.setImageResource(R.drawable.notfound)
             }
+        }
+
+        private fun eliminar(dataItem: Categoria): Boolean{
+            if(accion != null && accion == TUS_CATEGORIAS_FAVORITAS){
+                context.alert {
+                    customView {
+                        title = "¿Desea eliminar de favoritas la categoria ${dataItem.nombre}?"
+                        verticalLayout {
+                            positiveButton("Confirmar") {
+                                FirestoreUtil.deleteToCategoriasFavoritas(dataItem)
+                            }
+                            negativeButton("Cancelar") {
+                            }
+                        }
+                    }
+                }.show()
+            }
+            return true
         }
     }
 }

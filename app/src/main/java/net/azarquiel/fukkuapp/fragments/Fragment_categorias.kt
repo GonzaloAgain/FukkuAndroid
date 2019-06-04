@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_fragment_categorias.*
 import net.azarquiel.fukkuapp.adapter.CustomAdapterCategorias
-import net.azarquiel.fukkuapp.Model.Categoria
+import net.azarquiel.fukkuapp.model.Categoria
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.COLECCION_CATEGORIA
 import java.util.ArrayList
@@ -34,7 +34,7 @@ class Fragment_categorias : Fragment() {
     }
 
     private fun crearAdapter(){
-        adapter= CustomAdapterCategorias(activity!!.applicationContext, R.layout.categoriasrow)
+        adapter= CustomAdapterCategorias(activity!!.applicationContext, R.layout.categoriasrow, null)
         rvAllCategorias.layoutManager= LinearLayoutManager(activity!!.applicationContext)
         rvAllCategorias.adapter=adapter
     }

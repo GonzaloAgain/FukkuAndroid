@@ -23,11 +23,11 @@ import com.robertlevonyan.components.picker.set
 import kotlinx.android.synthetic.main.activity_detail_product.*
 import kotlinx.android.synthetic.main.content_detail_product.*
 import net.azarquiel.fukkuapp.AppConstants
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.util.*
 import net.azarquiel.fukkuapp.util.Util
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 class DetailProductActivity : AppCompatActivity() {
 
@@ -59,6 +59,7 @@ class DetailProductActivity : AppCompatActivity() {
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         idProducto=intent.getSerializableExtra("producto") as String
+        title = resources.getString(R.string.titleDetail)
         getProducto()
     }
 
@@ -126,9 +127,6 @@ class DetailProductActivity : AppCompatActivity() {
         if(producto.usuarioId != FirebaseAuth.getInstance().currentUser!!.uid){
             menu.findItem(R.id.action_delete_product).isVisible = false
             menu.findItem(R.id.action_update_product).isVisible = false
-            fab.hide()
-        }else{
-            menu.findItem(R.id.action_favorito_product).isVisible = false
             checkFavorite(menu)
             fab.setOnClickListener {
                 FirestoreUtil.getOrCreateChatChannel(producto.usuarioId, producto.id){ channelID ->
@@ -140,6 +138,10 @@ class DetailProductActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
             }
+
+        }else{
+            menu.findItem(R.id.action_favorito_product).isVisible = false
+            fab.hide()
         }
     }
 
@@ -174,24 +176,22 @@ class DetailProductActivity : AppCompatActivity() {
         return true
     }
 
-    /*private fun addToProductosFavoritos(){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
-            .document(producto.id).set(producto)
-    }
-
-    private fun deleteToProductosFavoritos(){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
-            .document(producto.id).delete()
-    }*/
-
     //metodo que llama a funciones que eliminan el producto de firestore
     private fun deleteProducto(){
-        /*FireStoreUtil.deleteForProductos(producto)
-        FireStoreUtil.deleteForCategoria(producto)
-        FireStoreUtil.deleteForTusProductos(producto)*/
-        FirestoreUtil.deleteProducto(producto)
-        FirestoreUtil.deleteChat(producto)
-        finish()
+        alert {
+            customView {
+                title = "¿Desea eliminar el producto ${producto.nombre}?"
+                verticalLayout {
+                    positiveButton("Confirmar") {
+                        FirestoreUtil.deleteProducto(producto)
+                        //FirestoreUtil.deleteChat(producto)
+                        finish()
+                    }
+                    negativeButton("Cancelar") {
+                    }
+                }
+            }
+        }.show()
     }
 
     //activa o descativa los edit text cuando el ususario pulsa en actualizar

@@ -17,7 +17,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_productos.*
 import kotlinx.android.synthetic.main.content_productos.*
 import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
-import net.azarquiel.fukkuapp.Model.Producto
+import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.util.*
 import net.azarquiel.fukkuapp.R
 import org.jetbrains.anko.toast
@@ -61,10 +61,9 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         accion=intent.getSerializableExtra("accion") as String
-        crearAdapter()
 
         if(accion == TUS_PRODUCTOS){
-            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
+            crearAdapter(accion)
             title = resources.getString(R.string.productosNav)
             cargarProductos(COLECCION_USUARIOS,FirestoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS)
             fab.setOnClickListener { view ->
@@ -72,15 +71,15 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
                     .setAction("Action", null).show()
             }
         }else if(accion == TUS_PRODUCTOS_FAVORITOS){
-            //KGqBjsuqe0747tCzBeyu --> esto es el id del usuario
+            crearAdapter(accion)
             title = resources.getString(R.string.productosFavNav)
             cargarProductos(COLECCION_USUARIOS,FirestoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS_FAVORITOS)
             fab.hide()
         }
     }
 
-    private fun crearAdapter(){
-        adapter= CustomAdapterProductos(this,R.layout.productosrow)
+    private fun crearAdapter(accion:String){
+        adapter= CustomAdapterProductos(this,R.layout.productosrow, accion)
         rvProductos.layoutManager= LinearLayoutManager(this)
         rvProductos.adapter=adapter
     }
@@ -104,8 +103,18 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
 
     fun pinchaProducto(v: View){
         val producto = v.tag as Producto
-        var intent= Intent(this, DetailProductActivity::class.java)
-        intent.putExtra("producto", producto.id)
-        startActivity(intent)
+        db.collection(COLECCION_PRODUCTOS).document(producto.id).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    var document = task.result
+                    if(document!!.exists()){
+                        var intent= Intent(this, DetailProductActivity::class.java)
+                        intent.putExtra("producto", "${document.data!!.getValue(CAMPO_IDPRODUCTO)}")
+                        startActivity(intent)
+                    }else{
+                        toast("Es posible que el producto haya sido borrado")
+                    }
+                }
+            }
     }
 }
