@@ -212,7 +212,7 @@ class AddProductoActivity : AppCompatActivity(){
         var producto = Producto(
             idDocumento.id,
             "${etNombreProducto.text}",
-            FireStoreUtil.nameUser(),
+            FirestoreUtil.nameUser(),
             "${etDescripcionProducto.text}",
             "${etPrecioProducto.text}",
             Util.formatearFecha("dd-MM-yyyy HH:mm",Date()),
@@ -220,13 +220,13 @@ class AddProductoActivity : AppCompatActivity(){
             "${longitude}",
             categoria.id,
             categoria.nombre,
-            FireStoreUtil.uidUser(),
+            FirestoreUtil.uidUser(),
             if(imagenRuta == null) "" else imagenRuta!!
         )
         /*FireStoreUtil.addProductoColeccionProductos(producto)
         FireStoreUtil.addProductoColeccionUsuarios(producto)
         FireStoreUtil.addProductoColeccionCategorias(producto)*/
-        FireStoreUtil.addProducto(producto)
+        FirestoreUtil.addProducto(producto)
         finish()
         Util.finaliza()
     }

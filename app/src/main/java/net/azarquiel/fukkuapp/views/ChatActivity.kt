@@ -17,8 +17,8 @@ import net.azarquiel.fukkuapp.AppConstants
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.Message
 import net.azarquiel.fukkuapp.model.ProductoPruebas
-import net.azarquiel.fukkuapp.util.FireStoreUtil
 import net.azarquiel.fukkuapp.adapter.MessagesAdapter
+import net.azarquiel.fukkuapp.util.FirestoreUtil
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -76,8 +76,7 @@ class ChatActivity : AppCompatActivity() {
                 productID)
             etMessage.text.clear()
 
-            FireStoreUtil.sendMessage(mensaje,channelID)
-        }
+            FirestoreUtil        }
 
     }
 

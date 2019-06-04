@@ -131,7 +131,7 @@ class DetailProductActivity : AppCompatActivity() {
             menu.findItem(R.id.action_favorito_product).isVisible = false
             checkFavorite(menu)
             fab.setOnClickListener {
-                FireStoreUtil.getOrCreateChatChannel(producto.usuarioId, producto.id){ channelID ->
+                FirestoreUtil.getOrCreateChatChannel(producto.usuarioId, producto.id){ channelID ->
                     //toast("Haber que me saca: ${channelID}")
                     val intent = Intent(this, ChatActivity::class.java)
                     intent.putExtra(AppConstants.CHANNEL_ID, channelID)
@@ -145,7 +145,7 @@ class DetailProductActivity : AppCompatActivity() {
 
     //metodo que comprueba si el producto esta en favoritos para poder cambiar el boolean y el boton del menu
     private fun checkFavorite(menu: Menu) {
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+        db.collection(COLECCION_USUARIOS).document(FirestoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
             .document(producto.id).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -164,10 +164,10 @@ class DetailProductActivity : AppCompatActivity() {
     //metodo que segun una variable boolean va a añadir o eliminar el producto de favoritos cuando el usuario le de al boton del menu
     private fun addDeleteFavoritos(item: MenuItem): Boolean{
         if(!isFavorito){
-            FireStoreUtil.addToProductosFavoritos(producto)
+            FirestoreUtil.addToProductosFavoritos(producto)
             item.title = resources.getString(R.string.deleteFavortios)
         }else{
-            FireStoreUtil.deleteToProductosFavoritos(producto)
+            FirestoreUtil.deleteToProductosFavoritos(producto)
             item.title = resources.getString(R.string.addFavortios)
         }
         isFavorito = !isFavorito
@@ -189,7 +189,7 @@ class DetailProductActivity : AppCompatActivity() {
         /*FireStoreUtil.deleteForProductos(producto)
         FireStoreUtil.deleteForCategoria(producto)
         FireStoreUtil.deleteForTusProductos(producto)*/
-        FireStoreUtil.deleteProducto(producto)
+        FirestoreUtil.deleteProducto(producto)
         finish()
     }
 
@@ -240,7 +240,7 @@ class DetailProductActivity : AppCompatActivity() {
        /* db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
         db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
         db.collection(COLECCION_PRODUCTOS).document(idProducto).set(producto)*/
-        FireStoreUtil.updateProducto(idProducto, producto)
+        FirestoreUtil.updateProducto(idProducto, producto)
         uriImagen = null
         imagenRuta = null
     }

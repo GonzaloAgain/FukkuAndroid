@@ -43,7 +43,7 @@ class CategoriaActivity : AppCompatActivity() {
     }
 
     private fun cargarCategoriasDeInteres(){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+        db.collection(COLECCION_USUARIOS).document(FirestoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
                 if (e != null) {
                     Log.w("TAG", "Listen failed.", e)

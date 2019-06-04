@@ -81,11 +81,11 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
 
     private fun addDeleteFavoritos(item: MenuItem) : Boolean{
         if(!isFavorito){
-            FireStoreUtil.addToCategoriasFavoritas(categoria)
+            FirestoreUtil.addToCategoriasFavoritas(categoria)
             //addToCategoriasFavoritas()
             item.title = resources.getString(R.string.deleteFavortios)
         }else{
-            FireStoreUtil.deleteToCategoriasFavoritas(categoria)
+            FirestoreUtil.deleteToCategoriasFavoritas(categoria)
             //deleteToCategoriasFavoritas()
             item.title = resources.getString(R.string.addFavortios)
         }
@@ -107,7 +107,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
-                        if(document.data.getValue(CAMPO_IDUSUARIO).toString() != FireStoreUtil.uidUser()){
+                        if(document.data.getValue(CAMPO_IDUSUARIO).toString() != FirestoreUtil.uidUser()){
                             var producto = document.toObject(Producto::class.java)
                             producto.nombreCategoria = ""
                             arrayProductos.add(producto)
@@ -119,7 +119,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
     }
 
     private fun checkFavorite(menu: Menu) {
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+        db.collection(COLECCION_USUARIOS).document(FirestoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

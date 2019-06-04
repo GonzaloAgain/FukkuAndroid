@@ -93,7 +93,7 @@ class Fragment_productos_por_cercania : Fragment(){
                     arrayProductosCercanos.clear()
                     for (document in task.result!!) {
                         if(checkDistance("${document.data.getValue(CAMPO_LATITUD)}", "${document.data.getValue(
-                                CAMPO_LONGITUD)}") && document.data.getValue(CAMPO_IDUSUARIO).toString() != FireStoreUtil.uidUser()){
+                                CAMPO_LONGITUD)}") && document.data.getValue(CAMPO_IDUSUARIO).toString() != FirestoreUtil.uidUser()){
                             arrayProductosCercanos.add(document.toObject(Producto::class.java))
                         }
                     }
