@@ -128,6 +128,34 @@ object FirestoreUtil {
         firestoreInstance.collection(COLECCION_PRODUCTOS).document(producto.id).delete()
     }
 
+    fun deleteChats(producto:Producto){
+        var channelID = ""
+        var otherUserID = ""
+
+        var docRef  = firestoreInstance.document("$COLECCION_USUARIOS/${uidUser()}/Chats/${producto.id}")
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    val channel = document.toObject(Chat::class.java)
+                    channelID = channel!!.channelID
+                }
+            }
+        docRef  = firestoreInstance.document("Canales/$channelID")
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    val channel = document.toObject(ChatChannel::class.java)
+                    for (userID in channel!!.usersID){
+                        if (userID != uidUser()) otherUserID = userID
+                    }
+                }
+            }
+
+        firestoreInstance.document("$COLECCION_USUARIOS/${uidUser()}/Chats/${producto.id}").delete()
+        firestoreInstance.document("$COLECCION_USUARIOS/$otherUserID/Chats/${producto.id}").delete()
+        firestoreInstance.document("Canales/$channelID").delete()
+    }
+
     /*fun deleteForProductos(producto:Producto){
 
     }
