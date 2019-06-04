@@ -32,7 +32,7 @@ object FirestoreUtil {
                                 productID: String,
                                 onComplete: (channelID: String) -> Unit){
         currentUserDocRef.collection("Chats")
-            .document(productID).get().addOnSuccessListener {
+            .document("$productID-$otherUserID").get().addOnSuccessListener {
                 if (it.exists()){
                     onComplete(it.toObject(Chat::class.java)!!.channelID)
                     return@addOnSuccessListener
@@ -45,13 +45,13 @@ object FirestoreUtil {
 
                 currentUserDocRef
                     .collection("Chats")
-                    .document(productID)
-                    .set(Chat(newChannel.id,productID))
+                    .document("$productID-$otherUserID")
+                    .set(Chat(newChannel.id,productID,otherUserID))
 
                 firestoreInstance.collection("Usuarios").document(otherUserID)
                     .collection("Chats")
-                    .document(productID)
-                    .set(Chat(newChannel.id,productID))
+                    .document("$productID-${uidUser()}")
+                    .set(Chat(newChannel.id,productID, uidUser()))
 
                 onComplete(newChannel.id)
             }

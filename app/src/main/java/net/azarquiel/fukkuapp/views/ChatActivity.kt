@@ -1,6 +1,7 @@
 package net.azarquiel.fukkuapp.views
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -18,13 +19,15 @@ import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.Message
 import net.azarquiel.fukkuapp.model.ProductoPruebas
 import net.azarquiel.fukkuapp.adapter.MessagesAdapter
+import net.azarquiel.fukkuapp.model.Producto
+import net.azarquiel.fukkuapp.util.CAMPO_IDPRODUCTO
 import net.azarquiel.fukkuapp.util.FirestoreUtil
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
-    private lateinit var product: ProductoPruebas
+    private lateinit var product: Producto
     private lateinit var productID: String
     private lateinit var database: FirebaseFirestore
     private lateinit var adapter: MessagesAdapter
@@ -32,8 +35,6 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-
-
 
         database = FirebaseFirestore.getInstance()
         val channelID = intent.getStringExtra(AppConstants.CHANNEL_ID)
@@ -76,7 +77,14 @@ class ChatActivity : AppCompatActivity() {
                 productID)
             etMessage.text.clear()
 
-            FirestoreUtil        }
+            FirestoreUtil.sendMessage(mensaje, channelID)
+        }
+
+        cvProductChat.setOnClickListener {
+            val intent= Intent(this, DetailProductActivity::class.java)
+            intent.putExtra("producto", product.id)
+            startActivity(intent)
+        }
 
     }
 
@@ -90,7 +98,7 @@ class ChatActivity : AppCompatActivity() {
 
             if (snapshot != null && snapshot.exists()) {
                 Log.d("PROFILE", "Current data: ${snapshot.data}")
-                product = snapshot.toObject(ProductoPruebas::class.java)!!
+                product = snapshot.toObject(Producto::class.java)!!
                 showProduct()
 
             } else {
@@ -101,12 +109,12 @@ class ChatActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showProduct() {
-        tvChatProduct.text = product.nombre + " - " + product.nombreUsuario
+        tvChatProduct.text = product.nombreUsuario + " - " + product.nombre
 
         if(product.imagen != ""){
             Glide.with(this).load(product.imagen).into(ivChatProduct)
         }else{
-            ivProfile.setImageResource(R.drawable.ic_fukku_logo)
+            ivChatProduct.setImageResource(R.drawable.notfound)
         }
     }
 

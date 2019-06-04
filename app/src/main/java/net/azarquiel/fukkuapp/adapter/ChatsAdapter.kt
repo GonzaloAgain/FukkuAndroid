@@ -41,7 +41,7 @@ class ChatsAdapter(val context: Context,
     class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Chat){
             itemView.tag = dataItem
-            itemView.tvChat.text = dataItem.productID
+            itemView.tvChat.text = "${dataItem.productID} - ${dataItem.otherUserID}"
         }
 
     }
