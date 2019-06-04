@@ -6,13 +6,16 @@ import net.azarquiel.fukkuapp.Model.Categoria
 import net.azarquiel.fukkuapp.Model.Producto
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import net.azarquiel.fukkuapp.model.*
+import net.azarquiel.fukkuapp.Model.*
+import net.azarquiel.fukkuapp.model.Chat
+import net.azarquiel.fukkuapp.model.ChatChannel
+import net.azarquiel.fukkuapp.model.Message
+import net.azarquiel.fukkuapp.model.User
 import net.azarquiel.fukkuapp.views.CreateUserActivity
 
 object FireStoreUtil {
 
     private val firestoreInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-    var db = FirebaseFirestore.getInstance()
 
     private val currentUserDocRef: DocumentReference
         get() = firestoreInstance.document("Usuarios/${FirebaseAuth.getInstance().uid
@@ -75,49 +78,68 @@ object FireStoreUtil {
     //endregion FCM
 
     fun addToCategoriasFavoritas(categoria: Categoria){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+        firestoreInstance.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).set(categoria)
     }
 
     fun deleteToCategoriasFavoritas(categoria: Categoria){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
+        firestoreInstance.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).delete()
     }
 
     fun addToProductosFavoritos(producto: Producto){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+        firestoreInstance.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
             .document(producto.id).set(producto)
     }
 
     fun deleteToProductosFavoritos(producto: Producto){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+        firestoreInstance.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
             .document(producto.id).delete()
     }
 
-    fun addProductoColeccionProductos(producto: Producto){
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
+    /*fun addProductoColeccionProductos(producto: Producto){
+
     }
 
     fun addProductoColeccionUsuarios(producto: Producto){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+
     }
 
     fun addProductoColeccionCategorias(producto: Producto){
-        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(
-            SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+
+    }
+    */
+
+    fun updateProducto(idProducto:String, producto:Producto){
+        firestoreInstance.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
+        firestoreInstance.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
+        firestoreInstance.collection(COLECCION_PRODUCTOS).document(idProducto).set(producto)
     }
 
-    fun deleteForProductos(producto:Producto){
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).delete()
+    fun addProducto(producto: Producto){
+        firestoreInstance.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
+        firestoreInstance.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(
+            SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+        firestoreInstance.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+    }
+
+    fun deleteProducto(producto:Producto){
+        firestoreInstance.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
+        firestoreInstance.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
+        firestoreInstance.collection(COLECCION_PRODUCTOS).document(producto.id).delete()
+    }
+
+    /*fun deleteForProductos(producto:Producto){
+
     }
 
     fun deleteForCategoria(producto:Producto){
-        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
+
     }
 
     fun deleteForTusProductos(producto:Producto){
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
-    }
+
+    }*/
 
     fun uidUser():String{
         return FirebaseAuth.getInstance().currentUser!!.uid

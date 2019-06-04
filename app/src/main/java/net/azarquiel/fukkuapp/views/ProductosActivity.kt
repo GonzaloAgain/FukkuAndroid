@@ -104,18 +104,8 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
 
     fun pinchaProducto(v: View){
         val producto = v.tag as Producto
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    var document = task.result
-                    if(document!!.exists()){
-                        var intent= Intent(this, DetailProductActivity::class.java)
-                        intent.putExtra("producto", document.toObject(Producto::class.java))
-                        startActivity(intent)
-                    }else{
-                        toast("Es posible que el producto haya sido borrado")
-                    }
-                }
-            }
+        var intent= Intent(this, DetailProductActivity::class.java)
+        intent.putExtra("producto", producto.id)
+        startActivity(intent)
     }
 }

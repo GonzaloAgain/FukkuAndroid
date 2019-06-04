@@ -39,6 +39,7 @@ class DetailProductActivity : AppCompatActivity() {
     private var uriImagen: Uri?=null
     private lateinit var riversRef: StorageReference
     private var imagenRuta: String?=null
+    private lateinit var idProducto:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +58,7 @@ class DetailProductActivity : AppCompatActivity() {
     //metodo donde se incializan las variables necesarias y se llama a los metodos necesarios para comenzar el proceso
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
-        producto=intent.getSerializableExtra("producto") as Producto
-        title = producto.nombre
+        idProducto=intent.getSerializableExtra("producto") as String
         getProducto()
     }
 
@@ -81,6 +81,24 @@ class DetailProductActivity : AppCompatActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    private fun getProducto() {
+        db.collection(COLECCION_PRODUCTOS).document(idProducto).
+            addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
+                if (e != null) {
+                    Log.w("PROFILE", "Listen failed.", e)
+                    return@EventListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d("PROFILE", "Current data: ${snapshot.data}")
+                    producto = snapshot.toObject(Producto::class.java)!!
+                    showProduct()
+                } else {
+                    Log.d("PROFILE", "Current data: null")
+                }
+            })
     }
 
     //pinta los datos del producto
@@ -168,9 +186,10 @@ class DetailProductActivity : AppCompatActivity() {
 
     //metodo que llama a funciones que eliminan el producto de firestore
     private fun deleteProducto(){
-        FireStoreUtil.deleteForProductos(producto)
+        /*FireStoreUtil.deleteForProductos(producto)
         FireStoreUtil.deleteForCategoria(producto)
-        FireStoreUtil.deleteForTusProductos(producto)
+        FireStoreUtil.deleteForTusProductos(producto)*/
+        FireStoreUtil.deleteProducto(producto)
         finish()
     }
 
@@ -218,9 +237,12 @@ class DetailProductActivity : AppCompatActivity() {
         if(imagenRuta !=null){
             producto.imagen = imagenRuta!!
         }
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).set(producto)
-        db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
-        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).set(producto)
+       /* db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
+        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
+        db.collection(COLECCION_PRODUCTOS).document(idProducto).set(producto)*/
+        FireStoreUtil.updateProducto(idProducto, producto)
+        uriImagen = null
+        imagenRuta = null
     }
 
     //picker donde seleccionas una imagen y te saca su URI
@@ -298,23 +320,5 @@ class DetailProductActivity : AppCompatActivity() {
         }
 
         return valid
-    }
-
-    private fun getProducto() {
-        db.collection(COLECCION_PRODUCTOS).document(producto.id).
-            addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
-            if (e != null) {
-                Log.w("PROFILE", "Listen failed.", e)
-                return@EventListener
-            }
-
-            if (snapshot != null && snapshot.exists()) {
-                Log.d("PROFILE", "Current data: ${snapshot.data}")
-                producto = snapshot.toObject(Producto::class.java)!!
-                showProduct()
-            } else {
-                Log.d("PROFILE", "Current data: null")
-            }
-        })
     }
 }

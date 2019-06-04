@@ -223,9 +223,10 @@ class AddProductoActivity : AppCompatActivity(){
             FireStoreUtil.uidUser(),
             if(imagenRuta == null) "" else imagenRuta!!
         )
-        FireStoreUtil.addProductoColeccionProductos(producto)
+        /*FireStoreUtil.addProductoColeccionProductos(producto)
         FireStoreUtil.addProductoColeccionUsuarios(producto)
-        FireStoreUtil.addProductoColeccionCategorias(producto)
+        FireStoreUtil.addProductoColeccionCategorias(producto)*/
+        FireStoreUtil.addProducto(producto)
         finish()
         Util.finaliza()
     }
