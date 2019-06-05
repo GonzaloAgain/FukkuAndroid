@@ -5,8 +5,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.row_chat.view.*
 import net.azarquiel.fukkuapp.model.Chat
+import net.azarquiel.fukkuapp.model.Producto
+import net.azarquiel.fukkuapp.util.COLECCION_PRODUCTOS
+import net.azarquiel.fukkuapp.util.FirestoreUtil
 
 /**
  * Created by gongaloagain on 25/05/19.
