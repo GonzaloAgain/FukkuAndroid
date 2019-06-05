@@ -35,3 +35,7 @@ data class Producto(
     val usuarioId : String = "",
     var imagen : String = ""
 ):Serializable
+
+data class Favorito(
+    val id : String = ""
+):Serializable

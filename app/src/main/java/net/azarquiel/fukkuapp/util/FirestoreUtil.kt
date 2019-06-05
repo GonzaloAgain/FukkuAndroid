@@ -4,12 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import net.azarquiel.fukkuapp.model.Categoria
-import net.azarquiel.fukkuapp.model.Producto
-import net.azarquiel.fukkuapp.model.Chat
-import net.azarquiel.fukkuapp.model.ChatChannel
-import net.azarquiel.fukkuapp.model.Message
-import net.azarquiel.fukkuapp.model.User
+import net.azarquiel.fukkuapp.model.*
 import net.azarquiel.fukkuapp.views.CreateUserActivity
 
 object FirestoreUtil {
@@ -87,8 +82,9 @@ object FirestoreUtil {
     }
 
     fun addToProductosFavoritos(producto: Producto){
+        var fav = Favorito(producto.id)
         firestoreInstance.collection(COLECCION_USUARIOS).document(uidUser()).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
-            .document(producto.id).set(producto)
+            .document(fav.id).set(fav)
     }
 
     fun deleteToProductosFavoritos(producto: Producto){

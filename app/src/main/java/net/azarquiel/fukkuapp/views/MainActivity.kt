@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener {
-            addProducto()
+            startActivity(intentFor<AddProductoActivity>())
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -127,17 +127,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var intent= Intent(this, ProductosActivity::class.java)
         intent.putExtra("accion", accion)
         startActivity(intent)
-    }
-
-    /*private fun categorias(){
-        var intent= Intent(this, CategoriaActivity::class.java)
-        startActivity(intent)
-    }*/
-
-    private fun addProducto(){
-        startActivity(intentFor<AddProductoActivity>())
-        /*var intent= Intent(this, AddProductoActivity::class.java)
-        startActivity(intent)*/
     }
 
     fun pulsarCategoria(v: View){

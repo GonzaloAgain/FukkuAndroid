@@ -2,7 +2,6 @@ package net.azarquiel.fukkuapp.views
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -20,6 +19,8 @@ import net.azarquiel.fukkuapp.adapter.CustomAdapterProductos
 import net.azarquiel.fukkuapp.model.Producto
 import net.azarquiel.fukkuapp.util.*
 import net.azarquiel.fukkuapp.R
+import net.azarquiel.fukkuapp.model.Favorito
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 
 class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
@@ -28,6 +29,7 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
     private lateinit var adapter : CustomAdapterProductos
     private lateinit var db: FirebaseFirestore
     private lateinit var arrayProductos:ArrayList<Producto>
+    private lateinit var arrayFavoritos:ArrayList<Favorito>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,20 +62,21 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
 
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
+        arrayProductos= ArrayList()
         accion=intent.getSerializableExtra("accion") as String
 
         if(accion == TUS_PRODUCTOS){
             crearAdapter(accion)
             title = resources.getString(R.string.productosNav)
             cargarProductos(COLECCION_USUARIOS,FirestoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS)
-            fab.setOnClickListener { view ->
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            fab.setOnClickListener {
+                startActivity(intentFor<AddProductoActivity>())
             }
         }else if(accion == TUS_PRODUCTOS_FAVORITOS){
             crearAdapter(accion)
             title = resources.getString(R.string.productosFavNav)
-            cargarProductos(COLECCION_USUARIOS,FirestoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS_FAVORITOS)
+            //cargarProductos(COLECCION_USUARIOS,FirestoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS_FAVORITOS)
+            cargarIdProductosFavoritos(FirestoreUtil.uidUser())
             fab.hide()
         }
     }
@@ -85,7 +88,6 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
     }
 
     private fun cargarProductos(coleccion:String,id:String,subcoleccion:String){
-        arrayProductos= ArrayList()
         db.collection(coleccion).document(id).collection(subcoleccion)
             .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
             .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
@@ -99,6 +101,41 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
                 }
                 adapter.setProductos(arrayProductos)
             })
+    }
+
+    private fun cargarIdProductosFavoritos(id:String){
+        arrayFavoritos= ArrayList()
+        db.collection(COLECCION_USUARIOS).document(id).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
+            .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
+                if (e != null) {
+                    Log.w("TAG", "Listen failed.", e)
+                    return@EventListener
+                }
+                arrayFavoritos.clear()
+                for (document in value!!) {
+                    arrayFavoritos.add(document.toObject(Favorito::class.java))
+                }
+                Log.d("Jonay", arrayFavoritos.toString())
+                cargarProductoFavorito(arrayFavoritos)
+            })
+    }
+
+    private fun cargarProductoFavorito(array:ArrayList<Favorito>){
+        Log.d("Jonay", array.toString())
+        arrayProductos.clear()
+        for(favorito in array){
+            db.collection(COLECCION_PRODUCTOS).document(favorito.id).get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        var document = task.result
+                        if(document!!.exists()){
+                            arrayProductos.add(document.toObject(Producto::class.java)!!)
+                            Log.d("Jonay", arrayProductos.toString())
+                            adapter.setProductos(arrayProductos.sortedBy {it.fecha}.reversed())
+                        }
+                    }
+                }
+        }
     }
 
     fun pinchaProducto(v: View){

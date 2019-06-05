@@ -84,6 +84,7 @@ class DetailProductActivity : AppCompatActivity() {
         return true
     }
 
+    //coger el producto en real data time para que se actualice en tiempo real
     private fun getProducto() {
         db.collection(COLECCION_PRODUCTOS).document(idProducto).
             addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
@@ -122,7 +123,10 @@ class DetailProductActivity : AppCompatActivity() {
             ivProductDetail.setImageResource(R.drawable.notfound)
         }
     }
-    
+
+    //Comrpobacion si el usuario es el propietario del producto
+    //Si no lo es se ocultan los botones de actualizar y eliminar, se mete el boton del chat y se pasa a comprobar si esta en favoritos o no
+    //Si es el dueño se esconde el boton de añadir a favoritos y el boton del chat
     private fun checkUser(menu: Menu){
         if(producto.usuarioId != FirebaseAuth.getInstance().currentUser!!.uid){
             menu.findItem(R.id.action_delete_product).isVisible = false
