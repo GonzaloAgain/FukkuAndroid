@@ -187,7 +187,7 @@ class DetailProductActivity : AppCompatActivity() {
                 title = "¿Desea eliminar el producto ${producto.nombre}?"
                 verticalLayout {
                     positiveButton("Confirmar") {
-                        //FirestoreUtil.deleteProducto(producto)
+                        FirestoreUtil.deleteProducto(producto)
                         FirestoreUtil.deleteChats(producto)
                         finish()
                     }
