@@ -60,6 +60,8 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
         return false
     }
 
+    //metodo que inicializa las variables y funciones necesarias
+    //dependiendo de la variable accion la activity valdra para listar tus productos o listar tus productos favoritos
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         arrayProductos= ArrayList()
@@ -68,27 +70,28 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
         if(accion == TUS_PRODUCTOS){
             crearAdapter(accion)
             title = resources.getString(R.string.productosNav)
-            cargarProductos(COLECCION_USUARIOS,FirestoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS)
+            cargarProductos(FirestoreUtil.uidUser())
             fab.setOnClickListener {
                 startActivity(intentFor<AddProductoActivity>())
             }
         }else if(accion == TUS_PRODUCTOS_FAVORITOS){
             crearAdapter(accion)
             title = resources.getString(R.string.productosFavNav)
-            //cargarProductos(COLECCION_USUARIOS,FirestoreUtil.uidUser(),SUBCOLECCION_PRODUCTOS_FAVORITOS)
             cargarIdProductosFavoritos(FirestoreUtil.uidUser())
             fab.hide()
         }
     }
 
+    //se crea el adapter de productos
     private fun crearAdapter(accion:String){
         adapter= CustomAdapterProductos(this,R.layout.productosrow, accion)
         rvProductos.layoutManager= LinearLayoutManager(this)
         rvProductos.adapter=adapter
     }
 
-    private fun cargarProductos(coleccion:String,id:String,subcoleccion:String){
-        db.collection(coleccion).document(id).collection(subcoleccion)
+    //metodo que carga todos los productos en tiempo real de la subcoleccion tus productos
+    private fun cargarProductos(id:String){
+        db.collection(COLECCION_USUARIOS).document(id).collection(SUBCOLECCION_PRODUCTOS)
             .orderBy(CAMPO_FECHA, Query.Direction.DESCENDING)
             .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
                 if (e != null) {
@@ -103,6 +106,7 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
             })
     }
 
+    //metodo que carga todos los id de productos que esten guardados en la subcoleccions tus productos favoritos
     private fun cargarIdProductosFavoritos(id:String){
         arrayFavoritos= ArrayList()
         db.collection(COLECCION_USUARIOS).document(id).collection(SUBCOLECCION_PRODUCTOS_FAVORITOS)
@@ -115,13 +119,12 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
                 for (document in value!!) {
                     arrayFavoritos.add(document.toObject(Favorito::class.java))
                 }
-                Log.d("Jonay", arrayFavoritos.toString())
                 cargarProductoFavorito(arrayFavoritos)
             })
     }
 
+    //metodo que recorre el array con los ids de los productos y saca el objeto producto
     private fun cargarProductoFavorito(array:ArrayList<Favorito>){
-        Log.d("Jonay", array.toString())
         arrayProductos.clear()
         for(favorito in array){
             db.collection(COLECCION_PRODUCTOS).document(favorito.id).get()
@@ -130,7 +133,6 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
                         var document = task.result
                         if(document!!.exists()){
                             arrayProductos.add(document.toObject(Producto::class.java)!!)
-                            Log.d("Jonay", arrayProductos.toString())
                             adapter.setProductos(arrayProductos.sortedBy {it.fecha}.reversed())
                         }
                     }
@@ -138,6 +140,7 @@ class ProductosActivity : AppCompatActivity(), SearchView.OnQueryTextListener{
         }
     }
 
+    //metodo que comprueba si el producto existe y si existe viaja a la activity del producto
     fun pinchaProducto(v: View){
         val producto = v.tag as Producto
         db.collection(COLECCION_PRODUCTOS).document(producto.id).get()

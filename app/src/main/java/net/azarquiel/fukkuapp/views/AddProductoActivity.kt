@@ -130,14 +130,6 @@ class AddProductoActivity : AppCompatActivity(){
         }
     }
 
-   /* private fun comprobarCampos() {
-        if(!etNombreProducto.text.isNullOrBlank() && !etDescripcionProducto.text.isNullOrBlank() && !etPrecioProducto.text.isNullOrBlank() && !categoriaElegida.isNullOrEmpty()){
-            beginAddProduct()
-        }else{
-            toast("Tienes que rellenar todos los campos")
-        }
-    }*/
-
     //metodo de comprobacion antes de subir el producto
     private fun validaciones(){
         if (!validateForm()) {
@@ -151,7 +143,7 @@ class AddProductoActivity : AppCompatActivity(){
                 addProduct()
             }
         }else{
-            toast("Tienes que activar la ubicacion para poder añadir un producto")
+            toast("Tienes que activar la ubicación para poder añadir un producto")
         }
     }
 
@@ -222,9 +214,7 @@ class AddProductoActivity : AppCompatActivity(){
             FirestoreUtil.uidUser(),
             if(imagenRuta == null) "" else imagenRuta!!
         )
-        /*FireStoreUtil.addProductoColeccionProductos(producto)
-        FireStoreUtil.addProductoColeccionUsuarios(producto)
-        FireStoreUtil.addProductoColeccionCategorias(producto)*/
+
         FirestoreUtil.addProducto(producto)
         finish()
         Util.finaliza()

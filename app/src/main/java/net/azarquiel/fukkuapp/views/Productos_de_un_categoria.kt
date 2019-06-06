@@ -67,6 +67,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
         return false
     }
 
+    //metodo para inicializar las variables y metodos necesarios
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         categoria=intent.getSerializableExtra("categoria") as Categoria
@@ -79,26 +80,27 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
         }
     }
 
-    private fun addDeleteFavoritos(item: MenuItem) : Boolean{
-        if(!isFavorito){
-            FirestoreUtil.addToCategoriasFavoritas(categoria)
-            //addToCategoriasFavoritas()
-            item.title = resources.getString(R.string.deleteFavortios)
-        }else{
-            FirestoreUtil.deleteToCategoriasFavoritas(categoria)
-            //deleteToCategoriasFavoritas()
-            item.title = resources.getString(R.string.addFavortios)
-        }
-        isFavorito = !isFavorito
-        return true
-    }
-
+    //se crea el adapter de categorias
     private fun crearAdapter(){
         adapter= CustomAdapterProductos(this,R.layout.productosrow, null)
         rvProductosDeUnaCategoria.layoutManager = LinearLayoutManager(this)
         rvProductosDeUnaCategoria.adapter=adapter
     }
 
+    //Metodo que comprobando una variable boolean elimina o añade esa categoria a favoritos
+    private fun addDeleteFavoritos(item: MenuItem) : Boolean{
+        if(!isFavorito){
+            FirestoreUtil.addToCategoriasFavoritas(categoria)
+            item.title = resources.getString(R.string.deleteFavortios)
+        }else{
+            FirestoreUtil.deleteToCategoriasFavoritas(categoria)
+            item.title = resources.getString(R.string.addFavortios)
+        }
+        isFavorito = !isFavorito
+        return true
+    }
+
+    //se cargan los productos de esa categoria y se añaden al array
     private fun cargarProductos(coleccion:String,id:String,subcoleccion:String){
         arrayProductos=ArrayList()
         db.collection(coleccion).document(id).collection(subcoleccion)
@@ -118,6 +120,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
             }
     }
 
+    //metodo que comprueba si esa categoria esta o no en favoritos para cambiar un boolean y el texto del menu
     private fun checkFavorite(menu: Menu) {
         db.collection(COLECCION_USUARIOS).document(FirestoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .document(categoria.id).get()
@@ -135,6 +138,7 @@ class Productos_de_un_categoria : AppCompatActivity(), SearchView.OnQueryTextLis
             }
     }
 
+    //metodo que comprueba si el producto existe y si es correcto te llevara a la activity de ese producto
     fun pinchaProducto(v: View){
         val producto = v.tag as Producto
         db.collection(COLECCION_PRODUCTOS).document(producto.id).get()

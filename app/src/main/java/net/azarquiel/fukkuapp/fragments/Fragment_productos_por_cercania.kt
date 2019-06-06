@@ -38,6 +38,7 @@ class Fragment_productos_por_cercania : Fragment(){
         return rootView
     }
 
+    //metodo donde se inicializan todas las variables y funciones necesarias
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         // Create persistent LocationManager reference
@@ -52,12 +53,15 @@ class Fragment_productos_por_cercania : Fragment(){
         }
     }
 
+    //se crea el adapter de productos
     private fun crearAdapter() {
         adapter= CustomAdapterProductos(activity!!.applicationContext, R.layout.productosrow, null)
         rvProductosCercanos.layoutManager= LinearLayoutManager(activity!!.applicationContext)
         rvProductosCercanos.adapter=adapter
     }
 
+    //metodo que añade al locationManager un listener para poder coger la ubicacion
+    //se define cada cuanto va a cambiar la ubicacion
     private fun ubicacion(){
         try {
             // Request location updates
@@ -71,7 +75,8 @@ class Fragment_productos_por_cercania : Fragment(){
         }
     }
 
-    //define the listener
+    //listener donde si la ubicacion cambia llamara al metodo de traer productos cercanos
+    //si se desactiva la ubicacion o no esta activada saldra una toast
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
             getProductsNearby(location.latitude,location.longitude)
@@ -83,6 +88,7 @@ class Fragment_productos_por_cercania : Fragment(){
         }
     }
 
+    //funcion que recorre la coleccion de productos y se comprueban cuales estan dentro de la distancia
     private fun getProductsNearby(latitud:Double, longitud:Double){
         locationUser.latitude=latitud
         locationUser.longitude=longitud
@@ -101,7 +107,9 @@ class Fragment_productos_por_cercania : Fragment(){
                 }
             }
     }
-    
+
+    //metodo donde se comprueba la distancia del producto al usuario
+    //para ello hay que tener dos variables Location con su latitud y longitud para poder compararlas
     private fun checkDistance(latitud:String, longitud:String) : Boolean{
         if(!latitud.isEmpty() && !longitud.isEmpty()){
             locationProduct.latitude = latitud.toDouble()

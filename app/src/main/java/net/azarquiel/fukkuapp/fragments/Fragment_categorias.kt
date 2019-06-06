@@ -26,6 +26,7 @@ class Fragment_categorias : Fragment() {
         return rootView
     }
 
+    //metodo donde se inicializan todas las variables y funciones necesarias
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         db = FirebaseFirestore.getInstance()
@@ -33,12 +34,14 @@ class Fragment_categorias : Fragment() {
         cargarCategorias()
     }
 
+    //se crea el adapter de categorias
     private fun crearAdapter(){
         adapter= CustomAdapterCategorias(activity!!.applicationContext, R.layout.categoriasrow, null)
         rvAllCategorias.layoutManager= LinearLayoutManager(activity!!.applicationContext)
         rvAllCategorias.adapter=adapter
     }
 
+    //se cargan todas las categorias y se añaden al array
     private fun cargarCategorias(){
         arrayCategorias= ArrayList()
         db.collection(COLECCION_CATEGORIA)

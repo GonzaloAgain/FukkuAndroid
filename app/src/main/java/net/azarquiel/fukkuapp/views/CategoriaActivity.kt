@@ -29,6 +29,7 @@ class CategoriaActivity : AppCompatActivity() {
         inicializate()
     }
 
+    //metodo donde se inicializan los metodos y/o variables necesarias
     private fun inicializate(){
         db = FirebaseFirestore.getInstance()
         title = resources.getString(R.string.categoriasFavNav)
@@ -36,12 +37,14 @@ class CategoriaActivity : AppCompatActivity() {
         cargarCategoriasDeInteres()
     }
 
+    //se crea el adapter del recyclerView
     private fun crearAdapter(){
         adapter= CustomAdapterCategorias(this, R.layout.categoriasrow, TUS_CATEGORIAS_FAVORITAS)
         rvCategorias.layoutManager= LinearLayoutManager(this)
         rvCategorias.adapter=adapter
     }
 
+    //Se cargan las categorias de interes en tiempo real y se añaden al array
     private fun cargarCategoriasDeInteres(){
         db.collection(COLECCION_USUARIOS).document(FirestoreUtil.uidUser()).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .addSnapshotListener(EventListener<QuerySnapshot> { value, e ->
@@ -59,6 +62,7 @@ class CategoriaActivity : AppCompatActivity() {
             })
     }
 
+    //metodo que te lleva a la activity de los productos de esa categoria
     fun pulsarCategoria(v: View){
         val categoria=v.tag as Categoria
         var intent= Intent(this, Productos_de_un_categoria::class.java)

@@ -129,5 +129,4 @@ class CreateUserActivity : AppCompatActivity() {
 
         return valid
     }
-
 }

@@ -30,6 +30,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         return rootView
     }
 
+    //metodo donde se inicializan todas las variables y funciones necesarias
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         arrayProductos=ArrayList()
@@ -43,14 +44,15 @@ class Fragment_productos_por_categoria_fav : Fragment() {
         }
     }
 
+    //se crea el adapter de productos
     private fun crearAdapter() {
         adapter= CustomAdapterProductos(activity!!.applicationContext, R.layout.productosrow, null)
         rvProductosCategoriaFav.layoutManager= LinearLayoutManager(activity!!.applicationContext)
         rvProductosCategoriaFav.adapter=adapter
     }
 
+    //metodo donde se cargan las categorias de interes del usuario
     private fun cargarCategoriasInteres(idUsuario:String){
-        //Este metodo de sacar colecciones de interes puede ser static porque se repite dos veces To Do
         db.collection(COLECCION_USUARIOS).document(idUsuario).collection(SUBCOLECCION_CATEGORIAS_FAVORITOS)
             .get()
             .addOnCompleteListener { task ->
@@ -64,6 +66,7 @@ class Fragment_productos_por_categoria_fav : Fragment() {
             }
     }
 
+    //se cargan los productos de esas categorias
     private fun cargarProductos(){
         arrayProductos.clear()
         for(categoria in arrayCategoriasInteres){

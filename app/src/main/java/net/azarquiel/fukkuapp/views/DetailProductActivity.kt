@@ -89,16 +89,16 @@ class DetailProductActivity : AppCompatActivity() {
         db.collection(COLECCION_PRODUCTOS).document(idProducto).
             addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
                 if (e != null) {
-                    Log.w("PROFILE", "Listen failed.", e)
+                    Log.w("PRODUCTO", "Listen failed.", e)
                     return@EventListener
                 }
 
                 if (snapshot != null && snapshot.exists()) {
-                    Log.d("PROFILE", "Current data: ${snapshot.data}")
+                    Log.d("PRODUCTO", "Current data: ${snapshot.data}")
                     producto = snapshot.toObject(Producto::class.java)!!
                     showProduct()
                 } else {
-                    Log.d("PROFILE", "Current data: null")
+                    Log.d("PRODUCTO", "Current data: null")
                 }
             })
     }
@@ -242,9 +242,6 @@ class DetailProductActivity : AppCompatActivity() {
         if(imagenRuta !=null){
             producto.imagen = imagenRuta!!
         }
-       /* db.collection(COLECCION_USUARIOS).document(FireStoreUtil.uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
-        db.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(idProducto).set(producto)
-        db.collection(COLECCION_PRODUCTOS).document(idProducto).set(producto)*/
         FirestoreUtil.updateProducto(idProducto, producto)
         uriImagen = null
         imagenRuta = null
