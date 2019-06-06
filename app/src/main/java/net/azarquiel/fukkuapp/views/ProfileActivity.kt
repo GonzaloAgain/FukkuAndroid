@@ -1,9 +1,7 @@
 package net.azarquiel.fukkuapp.views
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -27,10 +25,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.robertlevonyan.components.picker.ItemModel
 import com.robertlevonyan.components.picker.PickerDialog
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.content_profile.*
-import kotlinx.android.synthetic.main.nav_header_main.view.*
 import net.azarquiel.fukkuapp.R
 import net.azarquiel.fukkuapp.model.User
 import org.jetbrains.anko.*
@@ -56,7 +52,7 @@ class ProfileActivity : AppCompatActivity() {
         itProfileGender.inputType = InputType.TYPE_NULL
 
         user = FirebaseAuth.getInstance().currentUser!!
-
+        itProfileName.isEnabled = editable
 
         getUser()
         editData()
@@ -151,14 +147,15 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun updateUser() {
-        user?.updateEmail(itProfileEmail.text.toString())
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("Email", "User email address updated.")
+        if (validateForm()){
+            user?.updateEmail(itProfileEmail.text.toString())
+                ?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("Email", "User email address updated.")
+                    }
                 }
-            }
 
-        docRef.update(mapOf(
+            docRef.update(mapOf(
                 "name" to itProfileName.text.toString(),
                 "surnames" to itProfileSurnames.text.toString(),
                 "gender" to itProfileGender.text.toString(),
@@ -167,18 +164,21 @@ class ProfileActivity : AppCompatActivity() {
             ))
 
 
-        val profileUpdates = UserProfileChangeRequest.Builder()
-            .setDisplayName(itProfileName.text.toString())
-            .build()
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(itProfileName.text.toString())
+                .build()
 
-        user.updateProfile(profileUpdates)
+            user.updateProfile(profileUpdates)
+            toast("Datos actualizados")
+        } else {
+            itProfileEmail.setText(userFirestore.email)
+            toast("Debes introducir una dirección de correo")
+        }
 
         editData()
-        toast("Datos actualizados")
     }
 
     private fun editData() {
-        itProfileName.isEnabled = editable
         itProfileSurnames.isEnabled = editable
         itProfileBirthday.isEnabled = editable
         itProfileGender.isEnabled = editable
@@ -298,6 +298,10 @@ class ProfileActivity : AppCompatActivity() {
         if (user.photoUrl.toString() != "null") Glide.with(this).load(user.photoUrl).into(ivAvatar)
         val tvNick = nav_view.getHeaderView(0).nick
         tvNick.text = user.displayName*/
+    }
+
+    private fun validateForm(): Boolean {
+        return !TextUtils.isEmpty(itProfileEmail.text)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

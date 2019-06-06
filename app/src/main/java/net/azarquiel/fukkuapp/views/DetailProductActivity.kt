@@ -110,9 +110,9 @@ class DetailProductActivity : AppCompatActivity() {
         etNombreDetail.set(producto.nombre)
         etPrecioDetail.set(producto.precio)
         etDescripcionDetail.set(producto.descripcion)
-        tvFechaDetail.text = producto.fecha
-        tvUsuarioDetail.text = producto.nombreUsuario
-        tvCategoriaDetail.text = producto.nombreCategoria
+        tvSubidoPor.text = "Subido pot ${producto.nombreUsuario} el ${producto.fecha}"
+        tvCategoriaDetail.set(producto.nombreCategoria)
+        tvCategoriaDetail.isEnabled = false
     }
 
     //muestra la imagen con la url guardada en el interior del producto
@@ -187,8 +187,8 @@ class DetailProductActivity : AppCompatActivity() {
                 title = "¿Desea eliminar el producto ${producto.nombre}?"
                 verticalLayout {
                     positiveButton("Confirmar") {
-                        FirestoreUtil.deleteProducto(producto)
-                        //FirestoreUtil.deleteChat(producto)
+                        //FirestoreUtil.deleteProducto(producto)
+                        FirestoreUtil.deleteChats(producto)
                         finish()
                     }
                     negativeButton("Cancelar") {

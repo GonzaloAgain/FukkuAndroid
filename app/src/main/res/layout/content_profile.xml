@@ -48,26 +48,26 @@
                     android:id="@+id/input_layout_profile_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginTop="5dp" android:textColorHint="@color/colorPrimaryDark">
 
                 <EditText
                         android:id="@+id/itProfileName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hint_name" />
+                        android:hint="@string/hint_name"/>
 
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_layout_profile_surnames"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginTop="5dp" android:textColorHint="@color/colorPrimaryDark">
 
                 <EditText
                         android:id="@+id/itProfileSurnames"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hint_surnames" />
+                        android:hint="@string/hint_surnames"/>
 
             </android.support.design.widget.TextInputLayout>
             <TextView
@@ -80,39 +80,39 @@
                     android:id="@+id/input_layout_profile_gender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="10dp" android:textColorHint="@color/colorPrimaryDark">
 
                 <EditText
                         android:id="@+id/itProfileGender"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hint_gender" />
+                        android:hint="@string/hint_gender"/>
 
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_layout_profile_birthday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginTop="5dp" android:textColorHint="@color/colorPrimaryDark">
 
                 <EditText
                         android:id="@+id/itProfileBirthday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hint_birthday" />
+                        android:hint="@string/hint_birthday"/>
 
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_layout_profile_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginTop="5dp" android:textColorHint="@color/colorPrimaryDark">
 
                 <EditText
                         android:id="@+id/itProfileEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/hint_email" />
+                        android:hint="@string/hint_email"/>
 
             </android.support.design.widget.TextInputLayout>
             <Button

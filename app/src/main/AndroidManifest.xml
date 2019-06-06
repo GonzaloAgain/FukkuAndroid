@@ -84,7 +84,7 @@
         <!-- FCM -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@drawable/ic_menu_share"/>
+                android:resource="@drawable/ic_stat_noti"/>
 
         <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>

@@ -3,13 +3,9 @@ package net.azarquiel.fukkuapp.util
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import net.azarquiel.fukkuapp.model.*
 import net.azarquiel.fukkuapp.views.CreateUserActivity
-import com.google.android.gms.tasks.OnSuccessListener
-
 
 
 object FirestoreUtil {
@@ -114,6 +110,44 @@ object FirestoreUtil {
         firestoreInstance.collection(COLECCION_USUARIOS).document(uidUser()).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
         firestoreInstance.collection(COLECCION_CATEGORIA).document(producto.categoriaId).collection(SUBCOLECCION_PRODUCTOS).document(producto.id).delete()
         firestoreInstance.collection(COLECCION_PRODUCTOS).document(producto.id).delete()
+    }
+
+    fun deleteChats(producto:Producto){
+        firestoreInstance.collection(COLECCION_USUARIOS)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val userID = document.id
+                    checkUsersChats(producto, userID)
+                }
+            }
+    }
+
+    fun checkUsersChats(producto:Producto, userID: String){
+        firestoreInstance.collection(COLECCION_USUARIOS).document(userID).collection("Chats")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val chat = document.toObject(Chat::class.java)
+
+                    if (chat.productID == producto.id) {
+                        deleteDocument(document.id, userID,"Usuarios")
+                        deleteDocument(chat.channelID, userID,"Canales")
+                    }
+                }
+            }
+    }
+
+    fun deleteDocument(documentID: String, userID: String, collectionName: String){
+        if (collectionName == "Canales"){
+            firestoreInstance.collection(collectionName).document(documentID)
+                .delete()
+                .addOnSuccessListener { Log.d("PRUEBAS", "DocumentSnapshot successfully deleted!") }
+        } else {
+            firestoreInstance.collection(collectionName).document(userID).collection("Chats").document(documentID)
+                .delete()
+                .addOnSuccessListener { Log.d("PRUEBAS", "DocumentSnapshot successfully deleted!") }
+        }
     }
 
     fun uidUser():String{
